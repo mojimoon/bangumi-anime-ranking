@@ -34,4 +34,4 @@ Note:
 - Estimated time to get entry details: 40-50 minutes.
 - Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
 - Although fake user-agent works, it is recommended to [configure your own UA](https://github.com/bangumi/api/blob/master/docs-raw/user%20agent.md).
-- The data are crawled in groups. By default, 10 pages (240 entries) per block, and there are 32 blocks (320 pages). However, it is very likely that the number of pages has increased over time. Some of the variables are hard-coded, so you may need to modify them manually.
+- The data are crawled and processed in blocks. By default, 10 pages (240 entries) per block. At 2023-04-30, there are 320 pages in total, which are split into 32 blocks, numbered with their starting page number (1, 11, 21, ..., 311). It is very likely that pages and blocks will increase over time, but there should be no issue if you keep the default block setting.

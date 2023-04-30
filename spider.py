@@ -7,8 +7,9 @@ STEP1: fetch the entry as a list from the ranking page (spider)
 '''
 
 pre = 'https://bgm.tv/anime/browser?sort=rank&page='
-pages = 9999 # not hard-coded, just a large enough number
+pages = 10002 # not hard-coded, just a large enough number
 pages_block = 10
+per_page = 24
 
 def get_html(page, ofile):
     url = pre + str(page)
@@ -38,7 +39,7 @@ def main():
     for each pages_block pages
     '''
     start = time.time()
-    for i in range(1, pages + 1, pages_block):
+    for i in range(1, pages, pages_block):
         ofile = open('data\\id\\%d.txt' % i, 'w')
         entries = 0
         flag = False
@@ -51,10 +52,9 @@ def main():
                 break
             entries += res
         ofile.close()
-        if entries == 0:
-            break
         print('block %d done, %d entries' % (i, entries))
-        if flag:
+        # IF empty page OR non-error page entries < per_page
+        if flag or ((pages_block - 1) * per_page < entries < pages_block * per_page):
             break
     print('time elapsed: %.2f' % (time.time() - start))
 
