@@ -30,7 +30,8 @@ To crawl data by yourself, you can run the following commands, or simply run `ru
 Note:
 
 - All data are stored in UTF-8 encoding. Your spreadsheet software may not recognize it. You should open the CSV file with encoding `UTF-8` or `UTF-8 with BOM`.
-- Estimated time to get entry list: less than 1 minute; entry details: 35-45 minutes.
+- Estimated time to get entry list: around 2 minutes.
+- Estimated time to get entry details: 40-50 minutes.
 - Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
 - Although fake user-agent works, it is recommended to [configure your own UA](https://github.com/bangumi/api/blob/master/docs-raw/user%20agent.md).
 - The data are crawled in groups. By default, 10 pages (240 entries) per block, and there are 32 blocks (320 pages). However, it is very likely that the number of pages has increased over time. Some of the variables are hard-coded, so you may need to modify them manually.

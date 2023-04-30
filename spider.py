@@ -1,4 +1,4 @@
-import requests, re
+import requests, re, time
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
@@ -7,7 +7,7 @@ STEP1: fetch the entry as a list from the ranking page (spider)
 '''
 
 pre = 'https://bgm.tv/anime/browser?sort=rank&page='
-pages = 320
+pages = 9999 # not hard-coded, just a large enough number
 pages_block = 10
 
 def get_html(page, ofile):
@@ -30,20 +30,33 @@ def get_html(page, ofile):
         return entries
     except:
         print('error on page %d' % page)
-        return 0
+        return -1
 
 def main():
     '''
     output into 'data\id\%d.txt'
     for each pages_block pages
     '''
+    start = time.time()
     for i in range(1, pages + 1, pages_block):
         ofile = open('data\\id\\%d.txt' % i, 'w')
         entries = 0
+        flag = False
         for j in range(pages_block):
-            entries += get_html(i + j, ofile)
+            res = get_html(i + j, ofile)
+            if res == -1:
+                res = 0
+            elif res == 0:
+                flag = True
+                break
+            entries += res
         ofile.close()
+        if entries == 0:
+            break
         print('block %d done, %d entries' % (i, entries))
+        if flag:
+            break
+    print('time elapsed: %.2f' % (time.time() - start))
 
 if __name__ == '__main__':
     main()

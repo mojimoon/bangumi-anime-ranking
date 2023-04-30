@@ -10,8 +10,8 @@ API URL = /v0/subjects/{subject_id}
 pre = 'https://api.bgm.tv/v0/subjects/'
 id_pre = 'data\\id\\'
 id_suf = '.txt'
-max_block = 311
-block_size = lambda i: 240 if i < max_block else 233
+max_block = 311 # FIXME: hard-coded; largest block number, see data/id/???.txt
+block_size = lambda i: 240 if i < max_block else 233 # FIXME: hard-coded
 
 def get_json(sid):
     url = pre + str(sid)
