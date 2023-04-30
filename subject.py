@@ -10,12 +10,12 @@ API URL = /v0/subjects/{subject_id}
 pre = 'https://api.bgm.tv/v0/subjects/'
 id_pre = 'data\\id\\'
 id_suf = '.txt'
-max_block = 311 # FIXME: hard-coded; largest block number, see data/id/???.txt
-block_size = lambda i: 240 if i < max_block else 233 # FIXME: hard-coded
+max_block = 10002 # not hard-coded, just a large enough number
 
 def get_json(sid):
     url = pre + str(sid)
     try:
+        # r = requests.get(url, headers={'User-Agent': 'CryoVit/bangumi-anime-ranking'})
         r = requests.get(url, headers={'User-Agent': UserAgent().chrome})
         r.raise_for_status()
         r.encoding = r.apparent_encoding
@@ -27,18 +27,44 @@ def get_json(sid):
         return False
 
 def api_main():
-    res_ofile = open('data\\id\\restricted.txt', 'a') # append mode
+    # HACK: change open mode to 'w' for a fresh start; 'a' for block resuming
+    res_ofile = open('data\\id\\restricted.txt', 'w')
+    for i in range(1, max_block, 10):
+        try:
+            ifile = open(id_pre + str(i) + id_suf, 'r')
+        except:
+            print('block %d not found' % i)
+            return
+        else:
+            start = time.time()
+            for _sid in ifile:
+                sid = int(_sid)
+                if not get_json(sid):
+                    print('missing id ' + _sid)
+                    res_ofile.write(_sid + '\n')
+            ifile.close()
+            print('block %d done, time elapsed: %.2f' % (i, time.time() - start))
+    res_ofile.close()
+
+'''
+# if you want to use hard-coded value, use api_main_hc() instead
+# and change the following lines accordingly
+max_block = 311 # the max number seen in file list data/id/%d.txt
+block_size = lambda x: 240 if x < max_block else 3
+def api_main_hc():
+    res_ofile = open('data\\id\\restricted.txt', 'w')
     for i in range(1, max_block + 1, 10):
         ifile = open(id_pre + str(i) + id_suf, 'r')
         start = time.time()
         for j in range(block_size(i)):
             sid = int(ifile.readline())
             if not get_json(sid):
-                print('error on id %d' % sid)
+                print('missing id ' + str(sid))
                 res_ofile.write(str(sid) + '\n')
         ifile.close()
         print('block %d done, time elapsed: %.2f' % (i, time.time() - start))
     res_ofile.close()
+'''
 
 restricted = []
 
@@ -54,17 +80,22 @@ def available():
     since all data come in original rank order,
     double pointer is used to avoid unnecessary search
     '''
-    for i in range(1, max_block + 1, 10):
-        ifile = open(id_pre + str(i) + id_suf, 'r')
-        for j in range(block_size(i)):
-            sid = int(ifile.readline())
-            if res_index < res_len and sid == restricted[res_index]:
-                res_index += 1
-            else:
-                yield sid
+    for i in range(1, max_block, 10):
+        try:
+            ifile = open(id_pre + str(i) + id_suf, 'r')
+        except:
+            # print('block %d not found' % i)
+            return
+        else:
+            for _sid in ifile:
+                sid = int(_sid)
+                if res_index < res_len and sid == restricted[res_index]:
+                    res_index += 1
+                else:
+                    yield sid
         ifile.close()
 
-def available():
+def ava_main():
     ofile = open('data\\id\\available.txt', 'w')
     for sid in available():
         ofile.write(str(sid) + '\n')
@@ -77,22 +108,23 @@ def csv_main():
     extract the following fields:
         * "id": sid
         * "name_cn" (if empty, use "name" instead): title
-        * "rating": {"count": {"1": s[0], ..., "10": s[9]}, "rank": rank}
+        * "rating": {"count": {"1": s[0], ..., "10": s[9]}}
         * "collection": {"collect": collect, "doing": doing, "on_hold": on_hold, "dropped": dropped}
 
     write the following fields into CSV:
         * sid
         * title
         * s[0] ... s[9]
-        * rank
+        * rank (NOT JSON rank)
         * total votes = sum(s[0] ... s[9])
-        * average score
+        * average score (NOT JSON score)
         * standard deviation
         * user count = collect + doing + on_hold + dropped
     '''
     writer = csv.writer(ofile)
     writer.writerow(['sid', 'title', 's1', 's2', 's3', 's4', 's5', 's6', 's7',
         's8', 's9', 's10', 'rank', 'vote', 'avg', 'std', 'user'])
+    rank = 0
     for line in ifile:
         sid = int(line)
         jfile = open('data\\sub\\%d.json' % sid, 'r', encoding='utf-8')
@@ -104,7 +136,7 @@ def csv_main():
         s = [0] * 10
         for i in range(10):
             s[i] = j['rating']['count'][str(i + 1)]
-        rank = j['rating']['rank']
+        rank += 1 # rank within the available entries, not original rank
         vote = sum(s)
         avg = sum([(i + 1) * s[i] for i in range(10)]) / vote
         std = (sum([(i + 1 - avg) ** 2 * s[i] for i in range(10)]) / vote) ** 0.5
@@ -113,10 +145,12 @@ def csv_main():
         
         writer.writerow([sid, title] + s + [rank, vote, avg, std, user])
     ifile.close()
+    ofile.close()
 
 def main():
     api_main()
-    available()
+    # api_main_hc()
+    ava_main()
     csv_main()
 
 if __name__ == '__main__':
