@@ -28,11 +28,12 @@ To crawl data by yourself, you can run the following commands, or simply run `ru
 | Get entry details | `subject.py` | `data/sub/` | `api_main()` |
 | Pick up available entries | `subject.py` | `data/id/available.txt` | `ava_main()` |
 | Generate CSV containing all entries | `subject.py` | `data/sub.csv` | `csv_main()` |
+| Perform General Statistics | `stat.py` | `data/stat/` | |
 
 ### Notes
 
 - **All data are stored in UTF-8 encoding**. Your spreadsheet software may not recognize it. You should open the CSV file with encoding `UTF-8` or `UTF-8 with BOM`.
-- **Please configure `subject.py` Line 30 before running**. If you need a fresh start, change to `w`; but if you want to resume after some blocks, change to `a`.
+- **Please configure `subject.py` Line 31 before running**. If you need a fresh start, change to `w`; but if you want to resume after some blocks, change to `a`.
 - Estimated time to get entry list: around 2 minutes.
 - Estimated time to get entry details: 40-60 minutes.
 - Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
