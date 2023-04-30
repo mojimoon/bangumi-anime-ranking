@@ -1,5 +1,5 @@
-import requests
-import time
+import requests, time, json, csv
+from fake_useragent import UserAgent
 
 '''
 STEP2: fetch the details of each entry by API (subject)
@@ -16,7 +16,7 @@ block_size = lambda i: 240 if i < max_block else 233
 def get_json(sid):
     url = pre + str(sid)
     try:
-        r = requests.get(url, headers={'User-Agent': 'CryoVit/analyzer'})
+        r = requests.get(url, headers={'User-Agent': UserAgent().chrome})
         r.raise_for_status()
         r.encoding = r.apparent_encoding
         ofile = open('data\\sub\\%d.json' % sid, 'w', encoding='utf-8')
@@ -64,15 +64,60 @@ def available():
                 yield sid
         ifile.close()
 
-def available_main():
+def available():
     ofile = open('data\\id\\available.txt', 'w')
     for sid in available():
         ofile.write(str(sid) + '\n')
     ofile.close()
 
+def csv_main():
+    ifile = open('data\\id\\available.txt', 'r')
+    ofile = open('data\\sub.csv', 'w', newline='')
+    '''
+    extract the following fields:
+        * "id": sid
+        * "name_cn" (if empty, use "name" instead): title
+        * "rating": {"count": {"1": s[0], ..., "10": s[9]}, "rank": rank}
+        * "collection": {"collect": collect, "doing": doing, "on_hold": on_hold, "dropped": dropped}
+
+    write the following fields into CSV:
+        * sid
+        * title
+        * s[0] ... s[9]
+        * rank
+        * total votes = sum(s[0] ... s[9])
+        * average score
+        * standard deviation
+        * user count = collect + doing + on_hold + dropped
+    '''
+    writer = csv.writer(ofile)
+    writer.writerow(['sid', 'title', 's1', 's2', 's3', 's4', 's5', 's6', 's7',
+        's8', 's9', 's10', 'rank', 'vote', 'avg', 'std', 'user'])
+    for line in ifile:
+        sid = int(line)
+        jfile = open('data\\sub\\%d.json' % sid, 'r', encoding='utf-8')
+        j = json.load(jfile)
+        jfile.close()
+
+        sid = j['id']
+        title = j['name_cn'] if j['name_cn'] else j['name']
+        s = [0] * 10
+        for i in range(10):
+            s[i] = j['rating']['count'][str(i + 1)]
+        rank = j['rating']['rank']
+        vote = sum(s)
+        avg = sum([(i + 1) * s[i] for i in range(10)]) / vote
+        std = (sum([(i + 1 - avg) ** 2 * s[i] for i in range(10)]) / vote) ** 0.5
+        user = j['collection']['collect'] + j['collection']['doing'] + \
+            j['collection']['on_hold'] + j['collection']['dropped']
+        
+        writer.writerow([sid, title] + s + [rank, vote, avg, std, user])
+    ifile.close()
+
 def main():
     api_main()
-    available_main()
+    available()
+    csv_main()
 
 if __name__ == '__main__':
     main()

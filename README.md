@@ -1,12 +1,10 @@
-# Bangumi Ranking Analysis
+# Bangumi Anime Ranking
 
-Yet another [Bangumi](https://bgm.tv/) ranking analysis project.
+Yet another [Bangumi](https://bgm.tv/) anime ranking analysis project.
 
-- Only anime is considered.
 - Last Update: 2023-04-30
 - Entries: 6565 (= 7673 all ranked animes - 1108 restricted entries)
-- Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
-- As there are too many files, you cannot preview all of them on Github. You can clone this repo and view the files locally.
+- As there are too many files, you cannot preview all of them on Github. Clone this repo and view the files locally.
 - Enjoys!
 
 ## Usage
@@ -20,10 +18,19 @@ Yet another [Bangumi](https://bgm.tv/) ranking analysis project.
 
 Since crawling data can be time consuming, I have already crawled the data and put it in `data/`.
 
-* Crawling entry ID from ranking: `python spider.py`, the output will be txts in `data/ids/`. The restricted entries will be in `data/ids/restricted.txt`, and the rest will be summarized in `data/ids/available.txt`.
+To crawl data by yourself, you can run the following commands, or simply run `run.bat` (Windows only).
 
-* Crawling entry details via API: `python subject.py`, the output will be jsons in `data/sub/` and an integrated CSV file `data/ranking.csv`.
+| Task | Command | Output | Function |
+| ---- | ------- | ------ | ---- |
+| Get entry list | `python spider.py` | `data/id/` | |
+| Get entry details | `python subject.py` | `data/sub/` | `api_main()` |
+| Pick up available entries | `python subject.py` | `data/id/available.txt` | `available()` |
+| Generate CSV containing all entries | `python subject.py` | `data/sub.csv` | `csv_main()` |
 
-* Analyzing data: `python analysis.py`, the output will be figures in `output/`.
+Note:
 
-The data are crawled in groups. By default, 10 pages (240 entries) per block, and there are 32 blocks (320 pages). However, it is very likely that the number of pages has increased over time. You should change related variables in all three scripts.
+- All data are stored in UTF-8 encoding. Your spreadsheet software may not recognize it. You should open the CSV file with encoding `UTF-8` or `UTF-8 with BOM`.
+- Estimated time to get entry list: less than 1 minute; entry details: 35-45 minutes.
+- Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
+- Although fake user-agent works, it is recommended to [configure your own UA](https://github.com/bangumi/api/blob/master/docs-raw/user%20agent.md).
+- The data are crawled in groups. By default, 10 pages (240 entries) per block, and there are 32 blocks (320 pages). However, it is very likely that the number of pages has increased over time. Some of the variables are hard-coded, so you may need to modify them manually.

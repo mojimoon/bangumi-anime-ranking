@@ -1,6 +1,5 @@
-import requests
+import requests, re
 from fake_useragent import UserAgent
-import re
 from bs4 import BeautifulSoup
 
 '''
