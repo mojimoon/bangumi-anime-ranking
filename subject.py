@@ -10,8 +10,8 @@ API URL = /v0/subjects/{subject_id}
 pre = 'https://api.bgm.tv/v0/subjects/'
 id_pre = 'data\\id\\'
 id_suf = '.txt'
-blocks = 32
-block_size = lambda i: 240 if i < blocks else 233
+max_block = 311
+block_size = lambda i: 240 if i < max_block else 233
 
 def get_json(sid):
     url = pre + str(sid)
@@ -26,17 +26,19 @@ def get_json(sid):
     except:
         return False
 
-def main():
-    for i in range(1, 2): # TODO: change to blocks + 1
+def api_main():
+    _ofile = open('data\\id\\removed.txt', 'a') # append mode
+    for i in range(1, max_block + 1, 10):
         ifile = open(id_pre + str(i) + id_suf, 'r')
         start = time.time()
         for j in range(block_size(i)):
-            id = int(ifile.readline())
-            if not get_json(id):
-                print('error on id %d' % id)
-                time.sleep(3)
+            sid = int(ifile.readline())
+            if not get_json(sid):
+                print('error on id %d' % sid)
+                _ofile.write(str(sid) + '\n')
         ifile.close()
         print('block %d done, time elapsed: %.2f' % (i, time.time() - start))
+    _ofile.close()
 
 if __name__ == '__main__':
-    main()
+    api_main()
