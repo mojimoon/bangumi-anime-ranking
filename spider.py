@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 
 '''
 STEP1: fetch the entry as a list from the ranking page (spider)
-STEP2: fetch wanted info from each entry, save them into csv (api)
-STEP3: analyze the ranking data
 '''
 
 pre = 'https://bgm.tv/anime/browser?sort=rank&page='
