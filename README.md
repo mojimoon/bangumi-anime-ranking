@@ -2,7 +2,8 @@
 
 Yet another [Bangumi](https://bgm.tv/) anime ranking analysis project.
 
-- Last Update: 2023-04-30
+- Data Last Updated: 2023-04-30
+- Analysis Last Updated: 2023-05-01
 - Entries: 6565 (= 7673 all ranked animes - 1108 restricted entries)
 - As there are too many files, you cannot preview all of them on Github. Clone this repo and view the files locally.
 - Enjoys!
@@ -39,6 +40,24 @@ To crawl data by yourself, you can run the following commands, or simply run `ru
 - Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
 - Although fake user-agent works, it is recommended to [configure your own UA](https://github.com/bangumi/api/blob/master/docs-raw/user%20agent.md).
 - The data are crawled and processed in blocks. By default, 10 pages (240 entries) per block. At 2023-04-30, there are 320 pages in total, which are split into 32 blocks, numbered with their starting page number (1, 11, 21, ..., 311). It is very likely that pages and blocks will increase over time, but there should be no issue if you keep the default block setting.
-- Restricted entries can be found in `data/id/restricted.txt`. They appear in the ranking list but cannot be accessed by API. They are excluded from the CSV file.
+- Restricted entries can be found in `data/id/restricted.txt`. They appear in the ranking list but cannot be accessed by API. They are excluded from the `sub.csv` file.
 - The `rank` field in the CSV file is the rank within available entries. The original rank is not included since it cannot provide any statistical information.
 - Because of the restricted entries, it is common to see many entries missing with logs in the console. You can safely ignore them. However, if there are too many missing entries, you may want to check if your UA is correct.
+
+## Result
+
+### General Statistics
+
+| Field | Value |
+| :-: | :-: |
+| Total Entries | 6565 |
+| Total Votes | 7,573,022 |
+| Average of Average | 6.6637 |
+| Average of Standard Deviation | 1.2608 |
+| Average of Votes | 1153.5 |
+
+View [data/stat/stat.csv](data/stat/stat.csv) for more details.
+
+![Distribution of Average](data/stat/avg.png)
+![Distribution of Standard Deviation](data/stat/std.png)
+![Distribution of Votes](data/stat/vote.png)
