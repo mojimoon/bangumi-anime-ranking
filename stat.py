@@ -124,7 +124,7 @@ def x_nodist(s, name, fname, n, ofile):
     plt.axvline(med, color='r', linestyle='dashed', linewidth=1)
     plt.axvline(lq, color='m', linestyle='dashed', linewidth=1)
     x_diff = (hi - lo) / 500 
-    mid_y = plt.ylim()[1] / 100
+    mid_y = plt.ylim()[1] / pow(2000, 1/2) # max~2500 and min~50, sqrt so it is at the center of log scale
     plt.text(p3s + x_diff, mid_y, f"{p3s:.0f}", rotation=90, va='center', color='b')
     plt.text(p2s + x_diff, mid_y, f"{p2s:.0f}", rotation=90, va='center', color='b')
     plt.text(uq + x_diff, mid_y, f"{uq:.0f}", rotation=90, va='center', color='b')

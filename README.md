@@ -21,7 +21,7 @@ pip install -r requirements.txt
 
 Since crawling data can be time consuming, I have already crawled the data and put it in `data/`.
 
-To crawl data by yourself, you can run the following commands, or simply run `run.bat` (Windows only).
+To crawl data by yourself, you can run the following commands, or simply execute `run.bat` (Windows only).
 
 | Task | Script | Output | Function |
 | ---- | ------- | ------ | ---- |
@@ -61,3 +61,20 @@ View [data/stat/stat.csv](data/stat/stat.csv) for more details.
 ![Distribution of Average](data/stat/avg.png)
 ![Distribution of Standard Deviation](data/stat/std.png)
 ![Distribution of Votes](data/stat/vote.png)
+![Correlation between Rank and Average](data/stat/rank_avg.png)
+![Distribution of All Votes and Entry Average](data/stat/vote_breakdown.png)
+
+View [data/stat/](data/stat/) for plots of all fields.
+
+To be continued... 
+
+In addition to more plots, there will also be analysis on ranking algorithm, voting behavior, and more.
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+## Acknowledgement
+
+- [Bangumi](https://bgm.tv/) for providing the data.
+
