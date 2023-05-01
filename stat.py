@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import norm, pearsonr, halfnorm, mode
+from scipy.stats import norm, pearsonr, mode
 
 '''
 STEP3: perform statistical analysis (stat)
@@ -180,11 +180,13 @@ def x_discr(s, x1, name, fname, n, ofile):
     mid_y = plt.ylim()[1] / 1.9
     plt.text(mean + x_diff, mid_y, f"{mean:.4f}", rotation=90, va='center', color='b')
     plt.text(x1_mean + x_diff, mid_y, f"{x1_mean:.4f}", rotation=90, va='center', color='m')
+    lnsp = np.linspace(1, 10, 100)
+    plt.plot(lnsp, norm.pdf(lnsp, loc=mean, scale=std), color='r', linewidth=1)
     plt.title("Distribution of All Votes and Entry Average")
     plt.xlabel("Score")
     plt.ylabel("Density")
     plt.xticks(range(1, 11))
-    plt.legend(["Average of Votes", "Average of Average", "All User Votes", "Entry Average"])
+    plt.legend(["Average of Votes", "Average of Average", "Votes Normal Dist", "All User Votes", "Entry Average"])
     plt.savefig(pre + fname)
     plt.clf()
     ofile.write("\n")
@@ -259,8 +261,8 @@ def main():
     xy(vote, std, "Votes", "Standard Deviation", "vote_std.png", n, ofile, xs='log')
     # rank(x) vs std(y) => data/stat/rank_std.png
     xy(rank, std, "Rank", "Standard Deviation", "rank_std.png", n, ofile)
-    # rank(x) vs vote(y) => data/stat/rank_vote.png
-    xy(rank, vote, "Rank", "Votes", "rank_vote.png", n, ofile)
+    # rank(x) vs vote(y) => data/stat/rank_vote.png; not worth analyzing
+    # xy(rank, vote, "Rank", "Votes", "rank_vote.png", n, ofile)
     # avg(x) vs std(y) => data/stat/avg_std.png
     xy(avg, std, "Average", "Standard Deviation", "avg_std.png", n, ofile)
     # vote(x) vs avg(y) => data/stat/vote_avg.png; R~0.35, no strong correlation
