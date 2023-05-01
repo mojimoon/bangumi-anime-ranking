@@ -1,8 +1,8 @@
-Entries,6565
-Total Votes,7573022
+Entries,6565,
+Total Votes,7573022,
 
-Average of Average,6.6637
-Standard Deviation of Average,0.8609
+Average of Average,6.6637,
+Standard Deviation of Average,0.8609,
 95%CI,4.9418,8.3856
 Extremes,1.0962,9.1597
 ±3 Sigma,8.8094,2.0985
@@ -15,10 +15,10 @@ Extremes,1.0962,9.1597
 25%-75%,6.1905,7.2397
 30%-70%,6.3066,7.1323
 40%-60%,6.5273,6.9177
-Median,6.7071
+Median,6.7071,
 
-Average of Standard Deviation,1.2608
-Standard Deviation of Standard Deviation,0.2263
+Average of Standard Deviation,1.2608,
+Standard Deviation of Standard Deviation,0.2263,
 95%CI,0.8082,1.7133
 Extremes,0.3541,3.7899
 ±3 Sigma,2.6300,0.8391
@@ -31,10 +31,10 @@ Extremes,0.3541,3.7899
 25%-75%,1.1130,1.3596
 30%-70%,1.1336,1.3241
 40%-60%,1.1742,1.2653
-Median,1.2175
+Median,1.2175,
 
-Average of Votes,1153.5449
-Standard Deviation of Votes,2003.5674
+Average of Votes,1153.5449,
+Standard Deviation of Votes,2003.5674,
 Extremes,51,22520
 ±3 Sigma,16448,51
 1%-99%,53,10101
@@ -46,26 +46,26 @@ Extremes,51,22520
 25%-75%,147,1207
 30%-70%,180,948
 40%-60%,265,604
-Median,395
+Median,395,
 
-Correlation between Rank and Average,-0.9320
+Correlation between Rank and Average,-0.9320,
 Average = a * Rank + b,-0.000423,8.053754
 
-Correlation between User and Votes,0.9963
+Correlation between User and Votes,0.9963,
 Votes = a * User + b,0.620752,-84.243219
 
-Average of All User Votes,7.1854
-Standard Deviation of All User Votes,1.5090
-Median of All User Votes,10
-Mode of All User Votes,7
-Vote 10,433219,0.0572
-Vote 9,782503,0.1033
-Vote 8,2059068,0.2719
-Vote 7,2182702,0.2882
-Vote 6,1309105,0.1729
-Vote 5,482225,0.0637
-Vote 4,178067,0.0235
-Vote 3,66509,0.0088
-Vote 2,32138,0.0042
-Vote 1,47486,0.0063
+Average of All User Votes,7.1854,
+Standard Deviation of All User Votes,1.5090,
+Median of All User Votes,7,
+Mode of All User Votes,7,
+Vote 10,433219,5.72%
+Vote 9,782503,10.33%
+Vote 8,2059068,27.19%
+Vote 7,2182702,28.82%
+Vote 6,1309105,17.29%
+Vote 5,482225,6.37%
+Vote 4,178067,2.35%
+Vote 3,66509,0.88%
+Vote 2,32138,0.42%
+Vote 1,47486,0.63%
 

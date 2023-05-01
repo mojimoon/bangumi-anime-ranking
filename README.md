@@ -55,9 +55,10 @@ To crawl data by yourself, you can run the following commands, or simply execute
 | :-: | :-: |
 | Total Entries | 6565 |
 | Total Votes | 7,573,022 |
-| Average of Average | 6.6637 |
-| Average of Standard Deviation | 1.2608 |
-| Average of Votes | 1153.5 |
+| Average of Average Score | 6.6637 |
+| Median of Average Score | 6.7071 |
+| Average Votes per Entry | 1153.3 |
+| Average of User Votes | 7.1854 |
 
 View [data/stat/stat.csv](data/stat/stat.csv) for more details.
 

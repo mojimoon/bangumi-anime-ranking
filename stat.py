@@ -45,8 +45,8 @@ def x_stat(s, name, fname, n, ofile):
         np.median(s), np.percentile(s, 25), np.min(s), \
         np.percentile(s, _P2S), np.percentile(s, _N2S), \
         np.percentile(s, _P3S), np.percentile(s, _N3S)
-    ofile.write("Average of %s,%.4f\n" % (name, mean))
-    ofile.write("Standard Deviation of %s,%.4f\n" % (name, std))
+    ofile.write("Average of %s,%.4f,\n" % (name, mean))
+    ofile.write("Standard Deviation of %s,%.4f,\n" % (name, std))
     ofile.write("95%%CI,%.4f,%.4f\n" % (mean - 2 * std, mean + 2 * std))
     ofile.write("Extremes,%.4f,%.4f\n" % (lo, hi))
     ofile.write("±3 Sigma,%.4f,%.4f\n" % (p3s, n3s))
@@ -59,7 +59,7 @@ def x_stat(s, name, fname, n, ofile):
     ofile.write("25%%-75%%,%.4f,%.4f\n" % (lq, uq))
     ofile.write("30%%-70%%,%.4f,%.4f\n" % (np.percentile(s, 30), np.percentile(s, 70)))
     ofile.write("40%%-60%%,%.4f,%.4f\n" % (np.percentile(s, 40), np.percentile(s, 60)))
-    ofile.write("Median,%.4f\n" % med)
+    ofile.write("Median,%.4f,\n" % med)
     plt.hist(s, bins=250, density=True, alpha=.75, color='g')
     x = np.linspace(lo, hi, 1000)
     plt.plot(x, norm.pdf(x, mean, std), color='r', linewidth=.5)
@@ -104,8 +104,8 @@ def x_nodist(s, name, fname, n, ofile):
         np.median(s), np.percentile(s, 25), np.min(s), \
         np.percentile(s, _P2S), np.percentile(s, _N2S), \
         np.percentile(s, _P3S), np.percentile(s, _N3S)
-    ofile.write("Average of %s,%.4f\n" % (name, mean))
-    ofile.write("Standard Deviation of %s,%.4f\n" % (name, std))
+    ofile.write("Average of %s,%.4f,\n" % (name, mean))
+    ofile.write("Standard Deviation of %s,%.4f,\n" % (name, std))
     ofile.write("Extremes,%.0f,%.0f\n" % (lo, hi))
     ofile.write("±3 Sigma,%.0f,%.0f\n" % (p3s, n3s))
     ofile.write("1%%-99%%,%.0f,%.0f\n" % (np.percentile(s, 1), np.percentile(s, 99)))
@@ -117,7 +117,7 @@ def x_nodist(s, name, fname, n, ofile):
     ofile.write("25%%-75%%,%.0f,%.0f\n" % (lq, uq))
     ofile.write("30%%-70%%,%.0f,%.0f\n" % (np.percentile(s, 30), np.percentile(s, 70)))
     ofile.write("40%%-60%%,%.0f,%.0f\n" % (np.percentile(s, 40), np.percentile(s, 60)))
-    ofile.write("Median,%.0f\n" % med)
+    ofile.write("Median,%.0f,\n" % med)
     plt.hist(s, bins=500, density=True, alpha=.75, color='g')
     plt.yscale('log') # x-log(y)
     # x = np.linspace(lq, med, 100)
@@ -160,16 +160,17 @@ def x_discr(s, x1, name, fname, n, ofile):
         pre_sum += s[i]
         if pre_sum > n // 2:
             mid_idx = i
+            pre_sum = -999999999
         if s[i] > s[max_idx]:
             max_idx = i
     mid_idx += 1
     max_idx += 1
-    ofile.write("Average of %s,%.4f\n" % (name, mean))
-    ofile.write("Standard Deviation of %s,%.4f\n" % (name, std))
-    ofile.write("Median of %s,%d\n" % (name, mid_idx))
-    ofile.write("Mode of %s,%d\n" % (name, max_idx))
+    ofile.write("Average of %s,%.4f,\n" % (name, mean))
+    ofile.write("Standard Deviation of %s,%.4f,\n" % (name, std))
+    ofile.write("Median of %s,%d,\n" % (name, mid_idx))
+    ofile.write("Mode of %s,%d,\n" % (name, max_idx))
     for i in range(10, 0, -1):
-        ofile.write("Vote %d,%d,%.4f\n" % (i, s[i - 1], s[i - 1] / n))
+        ofile.write("Vote %d,%d,%.2f%%\n" % (i, s[i - 1], s[i - 1] / n * 100))
     # convert to probability density
     plt.bar(range(1, 11), s / n, width=.8, color='g', alpha=.75)
     plt.hist(x1, bins=250, density=True, alpha=.25, color='b')
@@ -201,7 +202,7 @@ def xy_corr(x, y, xname, yname, fname, n, ofile):
     ofile - output CSV file object
     '''
     r, p = pearsonr(x, y)
-    ofile.write("Correlation between %s and %s,%.4f\n" % (xname, yname, r))
+    ofile.write("Correlation between %s and %s,%.4f,\n" % (xname, yname, r))
     plt.scatter(x, y, s=1, alpha=.5, color='g')
     plt.title("Correlation between %s and %s" % (xname, yname))
     plt.xlabel(xname)
@@ -239,8 +240,8 @@ def main():
     n = len(df)
     sum_votes = df['vote'].sum()
     ofile = open(pre + "stat.csv", "w")
-    ofile.write("Entries,%d\n" % n)
-    ofile.write("Total Votes,%d\n\n" % sum_votes)
+    ofile.write("Entries,%d,\n" % n)
+    ofile.write("Total Votes,%d,\n\n" % sum_votes)
 
     # avg => data/stat/avg.png; negative skew (avg < med)
     avg = df['avg'].values.tolist()
