@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import norm, pearsonr, mode
+from scipy.stats import norm, pearsonr, halfnorm, mode
 
 '''
 STEP3: perform statistical analysis (stat)
@@ -56,7 +56,7 @@ def x_stat(s, name, fname, n, ofile):
     ofile.write("10%%-90%%,%.4f,%.4f\n" % (np.percentile(s, 10), np.percentile(s, 90)))
     ofile.write("15%%-85%%,%.4f,%.4f\n" % (np.percentile(s, 15), np.percentile(s, 85)))
     ofile.write("20%%-80%%,%.4f,%.4f\n" % (np.percentile(s, 20), np.percentile(s, 80)))
-    ofile.write("Quartiles,%.4f,%.4f\n" % (lq, uq))
+    ofile.write("25%%-75%%,%.4f,%.4f\n" % (lq, uq))
     ofile.write("30%%-70%%,%.4f,%.4f\n" % (np.percentile(s, 30), np.percentile(s, 70)))
     ofile.write("40%%-60%%,%.4f,%.4f\n" % (np.percentile(s, 40), np.percentile(s, 60)))
     ofile.write("Median,%.4f\n" % med)
@@ -89,7 +89,9 @@ def x_stat(s, name, fname, n, ofile):
 
 def x_nodist(s, name, fname, n, ofile):
     '''
-    basically same as x_stat(), but no distribution plot
+    basically same as x_stat()
+    the distribution decays faster than exponential but slower than gumbel (e^e^x)
+    try to fit the distribution with a half-normal distribution
     params:
     s - series to be analyzed
     name - name of the series
@@ -112,19 +114,21 @@ def x_nodist(s, name, fname, n, ofile):
     ofile.write("10%%-90%%,%.0f,%.0f\n" % (np.percentile(s, 10), np.percentile(s, 90)))
     ofile.write("15%%-85%%,%.0f,%.0f\n" % (np.percentile(s, 15), np.percentile(s, 85)))
     ofile.write("20%%-80%%,%.0f,%.0f\n" % (np.percentile(s, 20), np.percentile(s, 80)))
-    ofile.write("Quartiles,%.0f,%.0f\n" % (lq, uq))
+    ofile.write("25%%-75%%,%.0f,%.0f\n" % (lq, uq))
     ofile.write("30%%-70%%,%.0f,%.0f\n" % (np.percentile(s, 30), np.percentile(s, 70)))
     ofile.write("40%%-60%%,%.0f,%.0f\n" % (np.percentile(s, 40), np.percentile(s, 60)))
     ofile.write("Median,%.0f\n" % med)
     plt.hist(s, bins=500, density=True, alpha=.75, color='g')
     plt.yscale('log') # x-log(y)
+    # x = np.linspace(lq, med, 100)
+    # plt.plot(x, halfnorm.pdf(x, loc=lo, scale=med-lo), color='r', linewidth=1)
     plt.axvline(p3s, color='b', linestyle='dashdot', linewidth=.5)
     plt.axvline(p2s, color='b', linestyle='dotted', linewidth=1)
     plt.axvline(uq, color='b', linestyle='dashed', linewidth=1)
     plt.axvline(med, color='r', linestyle='dashed', linewidth=1)
     plt.axvline(lq, color='m', linestyle='dashed', linewidth=1)
     x_diff = (hi - lo) / 500 
-    mid_y = plt.ylim()[1] / pow(2000, 1/2) # max~2500 and min~50, sqrt so it is at the center of log scale
+    mid_y = plt.ylim()[1] / pow(2000, 1/2) # roughly center of the log scale
     plt.text(p3s + x_diff, mid_y, f"{p3s:.0f}", rotation=90, va='center', color='b')
     plt.text(p2s + x_diff, mid_y, f"{p2s:.0f}", rotation=90, va='center', color='b')
     plt.text(uq + x_diff, mid_y, f"{uq:.0f}", rotation=90, va='center', color='b')
@@ -208,7 +212,7 @@ def xy_corr(x, y, xname, yname, fname, n, ofile):
     plt.clf()
     ofile.write("\n")
 
-def xy(x, y, xname, yname, fname, n, ofile):
+def xy(x, y, xname, yname, fname, n, ofile, xs='linear', ys='linear'):
     '''
     basically the same as xy_corr(), but no linear regression line
     params:
@@ -221,11 +225,11 @@ def xy(x, y, xname, yname, fname, n, ofile):
     plt.scatter(x, y, s=1, alpha=.5, color='g')
     plt.xlabel(xname)
     plt.ylabel(yname)
-    plt.xscale('log')
-    plt.title("Correlation between %s and %s" % (xname, yname))
+    plt.xscale(xs)
+    plt.yscale(ys)
+    plt.title("Relation between %s and %s" % (xname, yname))
     plt.savefig(pre + fname)
     plt.clf()
-    ofile.write("\n")
 
 def main():
     df = pd.read_csv(ifile)
@@ -248,11 +252,19 @@ def main():
     # rank(x) vs avg(y) => data/stat/rank_avg.png; negative correlation
     rank = df['rank'].values.tolist() # in the same order as avg
     xy_corr(rank, avg, "Rank", "Average", "rank_avg.png", n, ofile)
-    # vote(x) vs std(y) => data/stat/vote_std.png
-    xy(vote, std, "Votes", "Standard Deviation", "vote_std.png", n, ofile)
     # user(x) vs vote(y) => data/stat/user_vote.png; positive correlation
     user = df['user'].values.tolist()
     xy_corr(user, vote, "User", "Votes", "user_vote.png", n, ofile)
+    # vote(x) vs std(y) => data/stat/vote_std.png; R~0.62
+    xy(vote, std, "Votes", "Standard Deviation", "vote_std.png", n, ofile, xs='log')
+    # rank(x) vs std(y) => data/stat/rank_std.png
+    xy(rank, std, "Rank", "Standard Deviation", "rank_std.png", n, ofile)
+    # rank(x) vs vote(y) => data/stat/rank_vote.png
+    xy(rank, vote, "Rank", "Votes", "rank_vote.png", n, ofile)
+    # avg(x) vs std(y) => data/stat/avg_std.png
+    xy(avg, std, "Average", "Standard Deviation", "avg_std.png", n, ofile)
+    # vote(x) vs avg(y) => data/stat/vote_avg.png; R~0.35, no strong correlation
+    xy(vote, avg, "Votes", "Average", "vote_avg.png", n, ofile, xs='log')
     # s1, ..., s10
     ss = [sum(df['s%d' % i].values.tolist()) for i in range(1, 11)]
     x_discr(ss, avg, "All User Votes", "vote_breakdown.png", sum_votes, ofile)

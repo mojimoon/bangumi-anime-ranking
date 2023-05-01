@@ -47,7 +47,7 @@ To crawl data by yourself, you can run the following commands, or simply execute
     - if you have configured UA correctly;
     - if your IP is blocked by Bangumi.
 
-## Result
+## Results
 
 ### General Statistics
 
