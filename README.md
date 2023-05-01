@@ -42,7 +42,10 @@ To crawl data by yourself, you can run the following commands, or simply execute
 - The data are crawled and processed in blocks. By default, 10 pages (240 entries) per block. At 2023-04-30, there are 320 pages in total, which are split into 32 blocks, numbered with their starting page number (1, 11, 21, ..., 311). It is very likely that pages and blocks will increase over time, but there should be no issue if you keep the default block setting.
 - Restricted entries can be found in `data/id/restricted.txt`. They appear in the ranking list but cannot be accessed by API. They are excluded from the `sub.csv` file.
 - The `rank` field in the CSV file is the rank within available entries. The original rank is not included since it cannot provide any statistical information.
-- Because of the restricted entries, it is common to see many entries missing with logs in the console. You can safely ignore them. However, if there are too many missing entries, you may want to check if your UA is correct.
+- Because of the restricted entries, it is common to see many entries missing with logs in the console. You can safely ignore them. However, if there are too many missing entries, you may want to check:
+    - if the API is down;
+    - if you have configured UA correctly;
+    - if your IP is blocked by Bangumi.
 
 ## Result
 
@@ -76,5 +79,5 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ## Acknowledgement
 
-- [Bangumi](https://bgm.tv/) for providing the data.
+[Bangumi](https://bgm.tv/) for providing the data.
 
