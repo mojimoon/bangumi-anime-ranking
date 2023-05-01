@@ -1,22 +1,50 @@
 Entries,6565
+Total Votes,7573022
 
 Average of Average,6.6637
 Standard Deviation of Average,0.8609
-Maximum of Average,9.1597
-+2sigma of Average,8.1575
-Upper Quartile of Average,7.2397
-Median of Average,6.7071
-Lower Quartile of Average,6.1905
--2sigma of Average,4.7722
-Minimum of Average,1.0962
+95%CI,4.9418,8.3856
+Extremes,1.0962,9.1597
+±3 Sigma,8.8094,2.0985
+1%-99%,4.1407,8.3977
+±2 Sigma,8.1810,4.7370
+5%-95%,5.1998,7.9146
+10%-90%,5.6055,7.6727
+15%-85%,5.8645,7.4925
+20%-80%,6.0504,7.3615
+Quartiles,6.1905,7.2397
+30%-70%,6.3066,7.1323
+40%-60%,6.5273,6.9177
+Median,6.7071
 
 Average of Standard Deviation,1.2608
 Standard Deviation of Standard Deviation,0.2263
-Maximum of Standard Deviation,3.7899
-+2sigma of Standard Deviation,1.8135
-Upper Quartile of Standard Deviation,1.3596
-Median of Standard Deviation,1.2175
-Lower Quartile of Standard Deviation,1.1130
--2sigma of Standard Deviation,0.9582
-Minimum of Standard Deviation,0.3541
+95%CI,0.8082,1.7133
+Extremes,0.3541,3.7899
+±3 Sigma,2.6300,0.8391
+1%-99%,0.9119,2.0184
+±2 Sigma,1.8356,0.9542
+5%-95%,0.9899,1.6666
+10%-90%,1.0344,1.5368
+15%-85%,1.0629,1.4529
+20%-80%,1.0893,1.4024
+Quartiles,1.1130,1.3596
+30%-70%,1.1336,1.3241
+40%-60%,1.1742,1.2653
+Median,1.2175
+
+Average of Votes,1153.5449
+Standard Deviation of Votes,2003.5674
+Extremes,51,22520
+±3 Sigma,16448,51
+1%-99%,53,10101
+±2 Sigma,7528,56
+5%-95%,63,4914
+10%-90%,79,3039
+15%-85%,99,2179
+20%-80%,120,1562
+Quartiles,147,1207
+30%-70%,180,948
+40%-60%,265,604
+Median,395
 
