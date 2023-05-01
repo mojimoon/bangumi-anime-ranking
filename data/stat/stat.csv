@@ -48,3 +48,25 @@ Quartiles,147,1207
 40%-60%,265,604
 Median,395
 
+Correlation between Rank and Average,-0.9320
+Average = a * Rank + b,-0.000423,8.053754
+
+
+Correlation between User and Votes,0.9963
+Votes = a * User + b,0.620752,-84.243219
+
+Average of All User Votes,7.1854
+Standard Deviation of All User Votes,1.5090
+Median of All User Votes,10
+Mode of All User Votes,7
+Vote 10,433219,0.0572
+Vote 9,782503,0.1033
+Vote 8,2059068,0.2719
+Vote 7,2182702,0.2882
+Vote 6,1309105,0.1729
+Vote 5,482225,0.0637
+Vote 4,178067,0.0235
+Vote 3,66509,0.0088
+Vote 2,32138,0.0042
+Vote 1,47486,0.0063
+

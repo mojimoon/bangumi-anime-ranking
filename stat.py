@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import norm
+from scipy.stats import norm, pearsonr, mode
 
 '''
 STEP3: perform statistical analysis (stat)
@@ -31,7 +31,7 @@ _N1S = norm.cdf(-1) * 100 # 15.865
 _N2S = norm.cdf(-2) * 100 # 2.275
 _N3S = norm.cdf(-3) * 100 # 0.135
 
-def analyze(s, name, fname, n, ofile):
+def x_stat(s, name, fname, n, ofile):
     '''
     params:
     s - series to be analyzed
@@ -87,9 +87,9 @@ def analyze(s, name, fname, n, ofile):
     plt.clf()
     ofile.write("\n")
 
-def analyze_exp(s, name, fname, n, ofile):
+def x_nodist(s, name, fname, n, ofile):
     '''
-    basically same as analyze(), but exponential distribution-like
+    basically same as x_stat(), but no distribution plot
     params:
     s - series to be analyzed
     name - name of the series
@@ -137,24 +137,125 @@ def analyze_exp(s, name, fname, n, ofile):
     plt.clf()
     ofile.write("\n")
 
+def x_discr(s, x1, name, fname, n, ofile):
+    '''
+    params:
+    s - series to be analyzed (y values)
+    x1 - additional series for comparison (x values)
+    name - name of the series
+    fname - plt file name (including extension)
+    n - number of entries
+    ofile - output CSV file object
+    '''
+    mean = sum((i + 1) * s[i] for i in range(0, 10)) / n
+    std = np.sqrt(sum((i + 1 - mean) ** 2 * s[i] for i in range(0, 10)) / n)
+    pre_sum = 0
+    max_idx = 0
+    mid_idx = 0
+    for i in range(0, 10):
+        pre_sum += s[i]
+        if pre_sum > n // 2:
+            mid_idx = i
+        if s[i] > s[max_idx]:
+            max_idx = i
+    mid_idx += 1
+    max_idx += 1
+    ofile.write("Average of %s,%.4f\n" % (name, mean))
+    ofile.write("Standard Deviation of %s,%.4f\n" % (name, std))
+    ofile.write("Median of %s,%d\n" % (name, mid_idx))
+    ofile.write("Mode of %s,%d\n" % (name, max_idx))
+    for i in range(10, 0, -1):
+        ofile.write("Vote %d,%d,%.4f\n" % (i, s[i - 1], s[i - 1] / n))
+    # convert to probability density
+    plt.bar(range(1, 11), s / n, width=.8, color='g', alpha=.75)
+    plt.hist(x1, bins=250, density=True, alpha=.25, color='b')
+    plt.axvline(mean, color='b', linestyle='dashed', linewidth=1)
+    x1_mean = np.mean(x1)
+    plt.axvline(x1_mean, color='m', linestyle='dashed', linewidth=1)
+    x_diff = (10 - 1) / 250 # hi = 10, lo = 1
+    mid_y = plt.ylim()[1] / 1.9
+    plt.text(mean + x_diff, mid_y, f"{mean:.4f}", rotation=90, va='center', color='b')
+    plt.text(x1_mean + x_diff, mid_y, f"{x1_mean:.4f}", rotation=90, va='center', color='m')
+    plt.title("Distribution of All Votes and Entry Average")
+    plt.xlabel("Score")
+    plt.ylabel("Density")
+    plt.xticks(range(1, 11))
+    plt.legend(["Average of Votes", "Average of Average", "All User Votes", "Entry Average"])
+    plt.savefig(pre + fname)
+    plt.clf()
+    ofile.write("\n")
+
+def xy_corr(x, y, xname, yname, fname, n, ofile):
+    '''
+    params:
+    x, y - series to be analyzed
+    xname, yname - name of the series (for labeling)
+    fname - plt file name (including extension)
+    n - number of entries
+    ofile - output CSV file object
+    '''
+    r, p = pearsonr(x, y)
+    ofile.write("Correlation between %s and %s,%.4f\n" % (xname, yname, r))
+    plt.scatter(x, y, s=1, alpha=.5, color='g')
+    plt.title("Correlation between %s and %s" % (xname, yname))
+    plt.xlabel(xname)
+    plt.ylabel(yname)
+    m, b = np.polyfit(x, y, 1) # draw the linear regression line
+    ofile.write("%s = a * %s + b,%.6f,%.6f\n" % (yname, xname, m, b))
+    plt.plot(x, m*np.float64(x) + b, color='b', linewidth=.5)
+    plt.legend(["Data", "Linear Regression"])
+    plt.savefig(pre + fname)
+    plt.clf()
+    ofile.write("\n")
+
+def xy(x, y, xname, yname, fname, n, ofile):
+    '''
+    basically the same as xy_corr(), but no linear regression line
+    params:
+    x, y - series to be analyzed
+    xname, yname - name of the series (for labeling)
+    fname - plt file name (including extension)
+    n - number of entries
+    ofile - output CSV file object
+    '''
+    plt.scatter(x, y, s=1, alpha=.5, color='g')
+    plt.xlabel(xname)
+    plt.ylabel(yname)
+    plt.xscale('log')
+    plt.title("Correlation between %s and %s" % (xname, yname))
+    plt.savefig(pre + fname)
+    plt.clf()
+    ofile.write("\n")
 
 def main():
     df = pd.read_csv(ifile)
     df = df.dropna()
     n = len(df)
+    sum_votes = df['vote'].sum()
     ofile = open(pre + "stat.csv", "w")
     ofile.write("Entries,%d\n" % n)
-    ofile.write("Total Votes,%d\n\n" % df['vote'].sum())
+    ofile.write("Total Votes,%d\n\n" % sum_votes)
 
     # avg => data/stat/avg.png; negative skew (avg < med)
     avg = df['avg'].values.tolist()
-    analyze(avg, "Average", "avg.png", n, ofile)
+    x_stat(avg, "Average", "avg.png", n, ofile)
     # std => data/stat/std.png; positive skew (avg > med)
     std = df['std'].values.tolist()
-    analyze(std, "Standard Deviation", "std.png", n, ofile)
-    # vote => data/stat/vote.png; exponential distribution
+    x_stat(std, "Standard Deviation", "std.png", n, ofile)
+    # vote => data/stat/vote.png
     vote = df['vote'].values.tolist()
-    analyze_exp(vote, "Votes", "vote.png", n, ofile)
+    x_nodist(vote, "Votes", "vote.png", n, ofile)
+    # rank(x) vs avg(y) => data/stat/rank_avg.png; negative correlation
+    rank = df['rank'].values.tolist() # in the same order as avg
+    xy_corr(rank, avg, "Rank", "Average", "rank_avg.png", n, ofile)
+    # vote(x) vs std(y) => data/stat/vote_std.png
+    xy(vote, std, "Votes", "Standard Deviation", "vote_std.png", n, ofile)
+    # user(x) vs vote(y) => data/stat/user_vote.png; positive correlation
+    user = df['user'].values.tolist()
+    xy_corr(user, vote, "User", "Votes", "user_vote.png", n, ofile)
+    # s1, ..., s10
+    ss = [sum(df['s%d' % i].values.tolist()) for i in range(1, 11)]
+    x_discr(ss, avg, "All User Votes", "vote_breakdown.png", sum_votes, ofile)
     ofile.close()
 
 if __name__ == '__main__':
