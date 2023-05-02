@@ -37,11 +37,11 @@ def api_main():
             return
         else:
             start = time.time()
-            for _sid in ifile:
+            for _sid in ifile: # NOTE: _sid is a string containing '\n'
                 sid = int(_sid)
                 if not get_json(sid):
-                    print('missing id ' + _sid)
-                    res_ofile.write(_sid + '\n')
+                    print('missing id ' + _sid, end='')
+                    res_ofile.write(_sid)
             ifile.close()
             print('block %d done, time elapsed: %.2f' % (i, time.time() - start))
     res_ofile.close()

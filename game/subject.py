@@ -28,7 +28,7 @@ def get_json(sid):
 
 def api_main():
     # HACK: change open mode to 'w' for a fresh start; 'a' for block resuming
-    res_ofile = open('data\\id\\restricted.txt', 'w')
+    res_ofile = open('data\\id\\restricted.txt', 'a')
     for i in range(1, max_block, 10):
         try:
             ifile = open(id_pre + str(i) + id_suf, 'r')
@@ -40,8 +40,8 @@ def api_main():
             for _sid in ifile:
                 sid = int(_sid)
                 if not get_json(sid):
-                    print('missing id ' + _sid)
-                    res_ofile.write(_sid + '\n')
+                    print('missing id ' + _sid, end='')
+                    res_ofile.write(_sid)
             ifile.close()
             print('block %d done, time elapsed: %.2f' % (i, time.time() - start))
     res_ofile.close()
@@ -129,8 +129,8 @@ def csv_main():
 
 def main():
     api_main()
-    ava_main()
-    csv_main()
+    # ava_main()
+    # csv_main()
 
 if __name__ == '__main__':
     main()
