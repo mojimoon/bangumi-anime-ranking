@@ -36,7 +36,7 @@ To crawl data by yourself, you can run the following commands, or simply execute
 - **All data are stored in UTF-8 encoding**. Your spreadsheet software may not recognize it. You should open the CSV file with encoding `UTF-8` or `UTF-8 with BOM`.
 - **Please configure `subject.py` Line 31 before running**. If you need a fresh start, change to `w`; but if you want to resume after some blocks, change to `a`.
 - Estimated time to get entry list: around 2 minutes.
-- Estimated time to get entry details: 40-60 minutes.
+- Estimated time to get entry details: 40-50 minutes.
 - Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
 - Although fake user-agent works, it is recommended to [configure your own UA](https://github.com/bangumi/api/blob/master/docs-raw/user%20agent.md).
 - The data are crawled and processed in blocks. By default, 10 pages (240 entries) per block. At 2023-04-30, there are 320 pages in total, which are split into 32 blocks, numbered with their starting page number (1, 11, 21, ..., 311). It is very likely that pages and blocks will increase over time, but there should be no issue if you keep the default block setting.
@@ -55,9 +55,10 @@ To crawl data by yourself, you can run the following commands, or simply execute
 | :-: | :-: |
 | Total Entries | 6565 |
 | Total Votes | 7,573,022 |
+| Average Votes per Entry | 1153.3 |
+| Median Votes per Entry | 395 |
 | Average of Average Score | 6.6637 |
 | Median of Average Score | 6.7071 |
-| Average Votes per Entry | 1153.3 |
 | Average of User Votes | 7.1854 |
 
 View [data/stat/stat.csv](data/stat/stat.csv) for more details.
