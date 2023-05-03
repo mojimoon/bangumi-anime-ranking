@@ -51,7 +51,8 @@ restricted = []
 def available():
     res_ifile = open('data\\id\\restricted.txt', 'r')
     for line in res_ifile:
-        restricted.append(int(line))
+        if line != '\n':
+            restricted.append(int(line))
     res_ifile.close()
 
     res_index = 0
@@ -129,8 +130,8 @@ def csv_main():
 
 def main():
     api_main()
-    # ava_main()
-    # csv_main()
+    ava_main()
+    csv_main()
 
 if __name__ == '__main__':
     main()
