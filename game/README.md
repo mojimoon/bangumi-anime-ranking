@@ -1,14 +1,12 @@
-# Bangumi Anime Ranking
+# Bangumi Game Ranking
 
-Yet another [Bangumi](https://bgm.tv/) anime ranking analysis project.
+Yet another [Bangumi](https://bgm.tv/) game ranking analysis project.
 
-- Data Last Updated: 2023-04-30
-- Analysis Last Updated: 2023-05-01
-- Entries: 6565 (= 7673 all ranked animes - 1108 restricted entries)
+- Data Last Updated: 2023-05-02
+- Analysis Last Updated: 2023-05-03
+- Entries: 5551 (= 6901 all ranked games - 1350 restricted entries)
 - As there are too many files, you cannot preview all of them on Github. Clone this repo and view the files locally.
 - Enjoys!
-
-## [Bangumi Game Ranking](game/)
 
 ## Usage
 
@@ -23,7 +21,7 @@ pip install -r requirements.txt
 
 Since crawling data can be time consuming, I have already crawled the data and put it in `data/`.
 
-To crawl data by yourself, you can run the following commands, or simply execute `run.bat` (Windows only).
+To crawl data by yourself, you can run the following commands.
 
 | Task | Script | Output | Function |
 | ---- | ------- | ------ | ---- |
@@ -55,13 +53,13 @@ To crawl data by yourself, you can run the following commands, or simply execute
 
 | Field | Value |
 | :-: | :-: |
-| Total Entries | 6565 |
-| Total Votes | 7,573,022 |
-| Average Votes per Entry | 1153.3 |
-| Median Votes per Entry | 395 |
-| Average of Average Score | 6.6637 |
-| Median of Average Score | 6.7071 |
-| Average of User Votes | 7.1854 |
+| Total Entries | 5551 |
+| Total Votes | 924,269 |
+| Average Votes per Entry | 166.5 |
+| Median Votes per Entry | 66 |
+| Average of Average Score | 6.9852 |
+| Median of Average Score | 7.0667 |
+| Average of User Votes | 7.5183 |
 
 View [data/stat/stat.csv](data/stat/stat.csv) for more details.
 
@@ -79,7 +77,7 @@ In addition to more plots, there will also be analysis on ranking algorithm, vot
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](../LICENSE) for details.
 
 ## Acknowledgement
 
