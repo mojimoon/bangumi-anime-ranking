@@ -213,6 +213,8 @@ def xy_corr(x, y, xname, yname, fname, n, ofile):
     ofile.write("%s = a * %s + b,%.6f,%.6f\n" % (yname, xname, m, b))
     plt.plot(x, m*np.float64(x) + b, color='b', linewidth=.5)
     plt.legend(["Data", "Linear Regression"])
+    if yname == "Average":
+        plt.yticks(range(1, 11))
     plt.savefig(pre + fname)
     plt.clf()
     ofile.write("\n")
