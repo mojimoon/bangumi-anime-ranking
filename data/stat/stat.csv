@@ -1,40 +1,40 @@
 Entries,6565,
 Total Votes,7573022,
 
-Average of Average,6.6637,
-Standard Deviation of Average,0.8609,
-95%CI,4.9418,8.3856
-Extremes,1.0962,9.1597
-±3 Sigma,8.8094,2.0985
-1%-99%,4.1407,8.3977
-±2 Sigma,8.1810,4.7370
-5%-95%,5.1998,7.9146
-10%-90%,5.6055,7.6727
-15%-85%,5.8645,7.4925
-20%-80%,6.0504,7.3615
-25%-75%,6.1905,7.2397
-30%-70%,6.3066,7.1323
-40%-60%,6.5273,6.9177
-Median,6.7071,
+Average of Average,6.663702,
+Standard Deviation of Average,0.860932,
+95%CI,4.941839,8.385566
+Extremes,1.096154,9.159652
+±3 Sigma,8.809416,2.098508
+1%-99%,4.140687,8.397654
+±2 Sigma,8.181011,4.736964
+5%-95%,5.199787,7.914637
+10%-90%,5.605464,7.672660
+15%-85%,5.864451,7.492486
+20%-80%,6.050382,7.361516
+25%-75%,6.190476,7.239700
+30%-70%,6.306643,7.132334
+40%-60%,6.527273,6.917729
+Median,6.707071,
 
-Average of Standard Deviation,1.2608,
-Standard Deviation of Standard Deviation,0.2263,
-95%CI,0.8082,1.7133
-Extremes,0.3541,3.7899
-±3 Sigma,2.6300,0.8391
-1%-99%,0.9119,2.0184
-±2 Sigma,1.8356,0.9542
-5%-95%,0.9899,1.6666
-10%-90%,1.0344,1.5368
-15%-85%,1.0629,1.4529
-20%-80%,1.0893,1.4024
-25%-75%,1.1130,1.3596
-30%-70%,1.1336,1.3241
-40%-60%,1.1742,1.2653
-Median,1.2175,
+Average of Standard Deviation,1.260760,
+Standard Deviation of Standard Deviation,0.226289,
+95%CI,0.808181,1.713338
+Extremes,0.354076,3.789927
+±3 Sigma,2.629954,0.839099
+1%-99%,0.911851,2.018400
+±2 Sigma,1.835572,0.954244
+5%-95%,0.989900,1.666648
+10%-90%,1.034421,1.536824
+15%-85%,1.062903,1.452855
+20%-80%,1.089331,1.402384
+25%-75%,1.112971,1.359551
+30%-70%,1.133640,1.324081
+40%-60%,1.174211,1.265302
+Median,1.217468,
 
-Average of Votes,1153.5449,
-Standard Deviation of Votes,2003.5674,
+Average of Votes,1153.544859,
+Standard Deviation of Votes,2003.567389,
 Extremes,51,22520
 ±3 Sigma,16448,51
 1%-99%,53,10101
@@ -48,14 +48,14 @@ Extremes,51,22520
 40%-60%,265,604
 Median,395,
 
-Correlation between Rank and Average,-0.9320,
+Correlation between Rank and Average,-0.932042,
 Average = a * Rank + b,-0.000423,8.053754
 
-Correlation between User and Votes,0.9963,
+Correlation between User and Votes,0.996305,
 Votes = a * User + b,0.620752,-84.243219
 
-Average of All User Votes,7.1854,
-Standard Deviation of All User Votes,1.5090,
+Average of All User Votes,7.185439,
+Standard Deviation of All User Votes,1.509041,
 Median of All User Votes,7,
 Mode of All User Votes,7,
 Vote 10,433219,5.72%
