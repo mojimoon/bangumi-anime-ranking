@@ -1,0 +1,68 @@
+Entries,5551,
+Total Votes,924269,
+
+Average of Average,6.9852,
+Standard Deviation of Average,0.8883,
+95%CI,5.2086,8.7619
+Extremes,1.0811,9.3625
+±3 Sigma,8.9618,3.2898
+1%-99%,4.4827,8.6986
+±2 Sigma,8.5329,4.9258
+5%-95%,5.4313,8.3099
+10%-90%,5.8615,8.0532
+15%-85%,6.1145,7.8657
+20%-80%,6.3077,7.7073
+25%-75%,6.4511,7.5862
+30%-70%,6.6027,7.4800
+40%-60%,6.8367,7.2647
+Median,7.0667,
+
+Average of Standard Deviation,1.2177,
+Standard Deviation of Standard Deviation,0.2904,
+95%CI,0.6370,1.7984
+Extremes,0.3586,4.1459
+±3 Sigma,2.8542,0.6223
+1%-99%,0.7273,2.1530
+±2 Sigma,1.9343,0.7910
+5%-95%,0.8575,1.7652
+10%-90%,0.9292,1.5891
+15%-85%,0.9695,1.4819
+20%-80%,1.0027,1.4034
+25%-75%,1.0296,1.3500
+30%-70%,1.0561,1.2998
+40%-60%,1.1063,1.2205
+Median,1.1600,
+
+Average of Votes,166.5050,
+Standard Deviation of Votes,322.3528,
+Extremes,21,5785
+±3 Sigma,2948,21
+1%-99%,21,1566
+±2 Sigma,1039,21
+5%-95%,23,632
+10%-90%,25,380
+15%-85%,28,262
+20%-80%,31,193
+25%-75%,35,151
+30%-70%,40,123
+40%-60%,51,89
+Median,66,
+
+Correlation between Rank and Average,-0.9481,
+Average = a * Rank + b,-0.000526,8.444193
+
+Average of All User Votes,7.5183,
+Standard Deviation of All User Votes,1.4960,
+Median of All User Votes,8,
+Mode of All User Votes,8,
+Vote 10,76184,8.24%
+Vote 9,146107,15.81%
+Vote 8,273117,29.55%
+Vote 7,238803,25.84%
+Vote 6,121808,13.18%
+Vote 5,40019,4.33%
+Vote 4,14116,1.53%
+Vote 3,5570,0.60%
+Vote 2,2913,0.32%
+Vote 1,5632,0.61%
+

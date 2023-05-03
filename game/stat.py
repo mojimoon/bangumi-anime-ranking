@@ -261,7 +261,7 @@ def main():
     xy_corr(rank, avg, "Rank", "Average", "rank_avg.png", n, ofile)
     # user(x) vs vote(y) => data/stat/user_vote.png; positive correlation
     user = df['user'].values.tolist()
-    xy_corr(user, vote, "User", "Votes", "user_vote.png", n, ofile)
+    # xy_corr(user, vote, "User", "Votes", "user_vote.png", n, ofile)
     # vote(x) vs std(y) => data/stat/vote_std.png; R~0.62
     xy(vote, std, "Votes", "Standard Deviation", "vote_std.png", n, ofile, xs='log')
     # rank(x) vs std(y) => data/stat/rank_std.png
