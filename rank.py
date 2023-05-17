@@ -40,8 +40,8 @@ def bayesian():
     '''
     global df
     # calculate the bayesian average
-    # the imaginary votes number = VOT_MIN, value = AVG_MED
-    df.loc[:,'bayes'] = (VOT_MIN * AVG_MED + df['vote'] * df['avg']) / (VOT_MIN + df['vote'])
+    # the imaginary votes number = VOT_MIN, value = AVG_AVG
+    df.loc[:,'bayes'] = (VOT_MIN * AVG_AVG + df['vote'] * df['avg']) / (VOT_MIN + df['vote'])
     # sort by bayesian average and give bayes_rank
     df = df.sort_values(by=['bayes'], ascending=False)
     df.loc[:,'b_rank'] = np.arange(1,ENT+1)
