@@ -1,4 +1,4 @@
 .requirements.txt
 
 # large file > 100M
-bangumi15M/
+bangumi15M/*.csv

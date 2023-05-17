@@ -32,6 +32,7 @@ To crawl data by yourself, you can run the following commands, or simply execute
 | Pick up available entries | `subject.py` | `data/id/available.txt` | `ava_main()` |
 | Generate CSV containing all entries | `subject.py` | `data/sub.csv` | `csv_main()` |
 | Perform General Statistics | `stat.py` | `data/stat/` | |
+| Perform Ranking Algorithm Analysis | `rank.py` | `data/rank/` | |
 
 ### Notes
 
@@ -50,8 +51,6 @@ To crawl data by yourself, you can run the following commands, or simply execute
     - if your IP is blocked by Bangumi.
 
 ## Results
-
-### General Statistics
 
 | Field | Value |
 | :-: | :-: |
@@ -76,6 +75,26 @@ View [data/stat/](data/stat/) for plots of all fields.
 To be continued... 
 
 In addition to more plots, there will also be analysis on ranking algorithm, voting behavior, and more.
+
+## PONET Ranking
+
+This is a new sub-project of Bangumi Anime Ranking.
+
+It is based on [Bangumi15M](https://www.kaggle.com/datasets/klion23/bangumi15m) on Kaggle, which is a dataset containing 15 million Bangumi anime votes. 
+
+It contains 8573 valid entries (including restricted ones) and 7,770,854 valid votes.
+
+Based on [a simplified ranking system based on partial order network](https://bgm.tv/group/topic/371075), it is possible to rank all entries based on how different users vote different entries, instead of how many votes each entry gets.
+
+The code can be found here: [rank_ponet.py](rank_ponet.py).
+
+However, I have not tested it thoroughly because the time to run it is too long. (The time complexity is O(n^2+m), where n is the number of entries and m is the number of votes. Estimated time to run on my i5-12500H laptop: 18 hours.)
+
+I plan to run it on a server in the future.
+
+Also, due to Github's file size limit (100MB), I cannot upload the dataset here. You can download it from Kaggle, put them under `bangumi15M/` (keep the file names unchanged, that is, `AnonymousUserCollection.csv` and `Subjects.csv`), and run the code.
+
+If you have any idea on how to improve the code, especially on the performance, please let me know.
 
 ## License
 
