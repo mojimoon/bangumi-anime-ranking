@@ -1,1 +1,4 @@
 .requirements.txt
+
+# large file > 100M
+bangumi15M/
