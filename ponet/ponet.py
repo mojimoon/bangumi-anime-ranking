@@ -22,7 +22,7 @@ input[1]: .\bangumi15M\Subjects.csv
         }
         locked: [bool] if locked - locked entries are ignored
 
-output: .\data\ponet\ponet.csv
+output: .\data\ponet.csv
     columns: [id,name,rank,total,total_score,prob_score,simp_score,conf_score]
         id: [int] subject ID
         name: [string] name (Chinese > Original)
@@ -54,10 +54,10 @@ import json, csv, time
 
 INPUT_0 = ".\\bangumi15M\\AnonymousUserCollection.csv"
 INPUT_1 = ".\\bangumi15M\\Subjects.csv"
-TMP_1 = ".\\data\\ponet\\subjects.csv"
-TMP_2 = ".\\data\\ponet\\relative_votes.csv"
-TMP_3 = ".\\data\\ponet\\unmerged.csv"
-OUTPUT = ".\\data\\ponet\\ponet.csv"
+TMP_1 = ".\\data\\subjects.csv"
+TMP_2 = ".\\data\\relative_votes.csv"
+TMP_3 = ".\\data\\unmerged.csv"
+OUTPUT = ".\\data\\ponet.csv"
 
 THRESHOLD = 10 # minimum number of users rated both A and B
 VOT_MIN = 50 # minimum number of votes to be considered
@@ -82,7 +82,7 @@ def pre():
     return len(df1)
 
 '''
-input[2]: .\data\ponet\subjects.csv (TMP_1)
+input[2]: .\data\subjects.csv (TMP_1)
     replacing INPUT_1
     columns: [id,name_cn,rank,total]
     only valid anime entries with more than VOT_MIN votes
@@ -215,7 +215,7 @@ def extra():
     plt.xlabel("Number of entries rated")
     plt.ylabel("Users")
     plt.yscale("log")
-    plt.savefig(".\\data\\ponet\\user_votes.png")
+    plt.savefig(".\\data\\user_votes.png")
     plt.clf()
 
     # plot the distribution of subjects' new scores
@@ -233,16 +233,15 @@ def extra():
     plt.xlabel("Normalized score")
     plt.ylabel("Subjects")
     plt.legend()
-    plt.savefig(".\\data\\ponet\\score_dist.png")
+    plt.savefig(".\\data\\score_dist.png")
     plt.clf()
 
 
 def main():
-    # pre()
-    # rela()
-    # ponet()
+    pre()
+    rela()
+    ponet()
     final()
-    # extra()
 
 if __name__ == "__main__":
     main()

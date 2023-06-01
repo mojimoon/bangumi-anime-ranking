@@ -16,7 +16,8 @@ A side project for better ranking.
 - Dataset: [Bangumi15M](https://www.kaggle.com/datasets/klion23/bangumi15m), contains 8573 valid entries (including restricted ones) and 7,770,854 valid votes.
 - Data Last Updated: 2023-05-09
 - Analysis Last Updated: 2023-06-01
-- See [ponet.md](ponet.md) for more details.
+- See [ponet/README.md](ponet/README.md) for more details.
+- The result has been published [on Bangumi](https://bgm.tv/group/topic/382497).
 
 ## Usage
 

@@ -1,8 +1,10 @@
-.requirements.txt
-
-# binary
+# Binary files
 *.xlsx
 
-# large file > 100M
-bangumi15M/*.csv
-data/ponet/relative_votes.csv
+# Large files (> 100MB)
+ponet/bangumi15M/*.csv
+ponet/data/relative_votes.csv
+
+# Miscellaneous
+.requirements.txt
+ponet/data/extra/
