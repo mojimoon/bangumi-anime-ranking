@@ -49,9 +49,7 @@ pseudo code:
 
 import pandas as pd
 import numpy as np
-import json
-import math
-import time
+import json, csv, time
 
 INPUT_0 = ".\\bangumi15M\\AnonymousUserCollection.csv"
 INPUT_1 = ".\\bangumi15M\\Subjects.csv"
@@ -94,26 +92,24 @@ n = 8573 # entries in INPUT_1
 df2 = pd.read_csv(TMP_1)
 ids = df2["id"].tolist()
 
-df0 = pd.read_csv(INPUT_0)[["user_id", "subject_id", "rating"]].reset_index(drop=True)
-df0 = df0.sort_values(by=["user_id", "subject_id"]).reset_index(drop=True)
-df0 = df0[df0["subject_id"].isin(ids)]
-df0 = df0[df0["rating"] > 0]
-
-len0 = len(df0) # 7770854
-
-last = time.time()
-print("time elapsed: %.2f" % (last - timer))
-
 # ["user_id", "subject_id", "rating"]
 UID = 0
 SID = 1
 RAT = 2
 
 def rela():
-    global last
     '''
     read data from INPUT_0, preprocess and save to TMP_2
     '''
+    df0 = pd.read_csv(INPUT_0)[["user_id", "subject_id", "rating"]].reset_index(drop=True)
+    df0 = df0.sort_values(by=["user_id", "subject_id"]).reset_index(drop=True)
+    df0 = df0[df0["subject_id"].isin(ids)]
+    df0 = df0[df0["rating"] > 0]
+    len0 = len(df0) # 7770854
+
+    last = time.time()
+    print("time elapsed: %.2f" % (last - timer))
+
     pv = {} # relative positive votes
     nv = {} # relative negative votes
     tv = {} # total votes
@@ -160,6 +156,7 @@ def ponet():
     '''
     read data from TMP_2, calculate scores and save to OUTPUT
     '''
+    global df2
     df2["total_score"] = 0
     df2["prob_score"] = 0
     df2["simp_score"] = 0
@@ -167,6 +164,7 @@ def ponet():
 
     with open(TMP_2, "r") as f:
         reader = csv.reader(f)
+        i = 0
         for row in reader:
             si, sj, N, X = map(int, row)
             if N >= THRESHOLD:
@@ -180,8 +178,13 @@ def ponet():
                 df2.loc[mask_sj, "simp_score"] -= np.sign(X)
                 df2.loc[mask_si, "conf_score"] += X / np.sqrt(N)
                 df2.loc[mask_sj, "conf_score"] -= X / np.sqrt(N)
+            if i % 100000 == 0:
+                print("%d %.2f" % (i, time.time() - timer))
+            i += 1
 
     df2 = df2.sort_values(by=["rank"]).reset_index(drop=True)
     df2.to_csv(OUTPUT, index=False, float_format="%.4f")
 
     print("time elapsed: %.2f" % (time.time() - timer))
+
+ponet()
