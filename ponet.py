@@ -238,9 +238,9 @@ def extra():
 def main():
     # pre()
     # rela()
-    # ponet()
-    # final()
-    extra()
+    ponet()
+    final()
+    # extra()
 
 if __name__ == "__main__":
     main()

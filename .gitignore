@@ -1,5 +1,8 @@
 .requirements.txt
 
+# binary
+*.xlsx
+
 # large file > 100M
 bangumi15M/*.csv
 data/ponet/relative_votes.csv
