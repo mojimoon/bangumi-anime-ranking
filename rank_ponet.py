@@ -49,12 +49,14 @@ pseudo code:
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import json, csv, time
 
 INPUT_0 = ".\\bangumi15M\\AnonymousUserCollection.csv"
 INPUT_1 = ".\\bangumi15M\\Subjects.csv"
 TMP_1 = ".\\data\\ponet\\subjects.csv"
 TMP_2 = ".\\data\\ponet\\relative_votes.csv"
+TMP_3 = ".\\data\\ponet\\unmerged.csv"
 OUTPUT = ".\\data\\ponet\\ponet.csv"
 
 THRESHOLD = 10 # minimum number of users rated both A and B
@@ -86,6 +88,7 @@ input[2]: .\data\ponet\subjects.csv (TMP_1)
     only valid anime entries with more than VOT_MIN votes
 '''
 
+# XXX: YOU NEED TO RUN THIS FIRST
 # n = pre()
 n = 8573 # entries in INPUT_1
 
@@ -150,41 +153,94 @@ def rela():
         for (si, sj), v in tv.items():
             f.write("%d,%d,%d,%d\n" % (si, sj, v, pv.get((si, sj), 0) - nv.get((si, sj), 0)))
 
-# rela()
-
 def ponet():
-    '''
-    read data from TMP_2, calculate scores and save to OUTPUT
-    '''
     global df2
-    df2["total_score"] = 0
-    df2["prob_score"] = 0
-    df2["simp_score"] = 0
-    df2["conf_score"] = 0
-
-    with open(TMP_2, "r") as f:
-        reader = csv.reader(f)
-        i = 0
-        for row in reader:
-            si, sj, N, X = map(int, row)
-            if N >= THRESHOLD:
-                mask_si = df2["id"] == si
-                mask_sj = df2["id"] == sj
-                df2.loc[mask_si, "total_score"] += X
-                df2.loc[mask_sj, "total_score"] -= X
-                df2.loc[mask_si, "prob_score"] += X / N
-                df2.loc[mask_sj, "prob_score"] -= X / N
-                df2.loc[mask_si, "simp_score"] += np.sign(X)
-                df2.loc[mask_sj, "simp_score"] -= np.sign(X)
-                df2.loc[mask_si, "conf_score"] += X / np.sqrt(N)
-                df2.loc[mask_sj, "conf_score"] -= X / np.sqrt(N)
-            if i % 100000 == 0:
-                print("%d %.2f" % (i, time.time() - timer))
-            i += 1
-
-    df2 = df2.sort_values(by=["rank"]).reset_index(drop=True)
-    df2.to_csv(OUTPUT, index=False, float_format="%.4f")
+    data = np.loadtxt(TMP_2, delimiter=",", dtype=int)
+    mask = np.where(data[:, 2] >= THRESHOLD)[0]
+    data = data[mask]
+    # cols: [si, sj, N, X]
+    # print(data.shape) # (19151383, 4)
+    si = np.unique(data[:, 0])
+    sj = np.unique(data[:, 1])
+    _ids = np.union1d(si, sj)
+    # print(_ids.shape) # (7696,)
+    # print(len(ids)) # 8573 (also n = 8573)
+    scores = np.zeros((n, 5))
+    # cols: [id, total_score, prob_score, simp_score, conf_score]
+    scores[:, 0] = ids
+    '''
+    scores[si, 1] = sum(data[l, 3] for l in range(data.shape[0]) if data[l, 0] == scores[si, 0])
+    also use a map to memory which row each sid is in (since there are only 8573 rows)
+    '''
+    sid2row = {}
+    for l in range(data.shape[0]):
+        if l % 1000000 == 0:
+            print("%d %.2f" % (l, time.time() - timer))
+        _si = data[l, 0]
+        if _si not in sid2row:
+            sid2row[_si] = np.where(scores[:, 0] == _si)[0][0]
+        _sj = data[l, 1]
+        if _sj not in sid2row:
+            sid2row[_sj] = np.where(scores[:, 0] == _sj)[0][0]
+        scores[sid2row[_si], 1] += data[l, 3] # total_score: X
+        scores[sid2row[_sj], 1] -= data[l, 3]
+        scores[sid2row[_si], 2] += data[l, 3] / data[l, 2] # prob_score: X / N
+        scores[sid2row[_sj], 2] -= data[l, 3] / data[l, 2]
+        scores[sid2row[_si], 3] += np.sign(data[l, 3]) # simp_score: sgn(X)
+        scores[sid2row[_sj], 3] -= np.sign(data[l, 3])
+        scores[sid2row[_si], 4] += data[l, 3] / np.sqrt(data[l, 2]) # conf_score: X / sqrt(N)
+        scores[sid2row[_sj], 4] -= data[l, 3] / np.sqrt(data[l, 2])
+    
+    np.savetxt(TMP_3, scores, delimiter=",", fmt="%.0f,%.0f,%.4f,%.0f,%.4f")
 
     print("time elapsed: %.2f" % (time.time() - timer))
 
-ponet()
+def final():
+    # finally, merge df2 and scores
+    df3 = pd.read_csv(TMP_3, header=None, names=["id", "total_score", "prob_score", "simp_score", "conf_score"])
+    df3 = df3.drop_duplicates(subset=["id"])
+    df3 = df3.sort_values(by=["id"]).reset_index(drop=True)
+    df4 = pd.merge(df2.drop_duplicates(subset=["id"]), df3, on="id")
+    df4.to_csv(OUTPUT, index=False)
+
+def extra():
+    # plot the distribution of users' votes count
+    df0 = pd.read_csv(INPUT_0)[["user_id", "subject_id", "rating"]].reset_index(drop=True)
+    df0 = df0.sort_values(by=["user_id", "subject_id"]).reset_index(drop=True)
+    df0 = df0[df0["rating"] > 0]
+    counts = df0["user_id"].value_counts()
+    plt.hist(counts, bins=500, range=(0, 3000))
+    plt.xlabel("Number of entries rated")
+    plt.ylabel("Users")
+    plt.yscale("log")
+    plt.savefig(".\\data\\ponet\\user_votes.png")
+    plt.clf()
+
+    # plot the distribution of subjects' new scores
+    df3 = pd.read_csv(TMP_3, header=None, names=["id", "total_score", "prob_score", "simp_score", "conf_score"])
+    # scores are only "transfered" from other subjects so the mean must be 0
+    # still normalize them to std = 1
+    df3["total_score"] /= df3["total_score"].std()
+    df3["prob_score"] /= df3["prob_score"].std()
+    df3["simp_score"] /= df3["simp_score"].std()
+
+    plt.hist(df3["total_score"], bins=100, color="red", alpha=0.5, label="total_score", range=(-5, 5))
+    plt.hist(df3["prob_score"], bins=100, color="green", alpha=0.5, label="prob_score", range=(-5, 5))
+    plt.hist(df3["simp_score"], bins=100, color="blue", alpha=0.5, label="simp_score", range=(-5, 5))
+
+    plt.xlabel("Normalized score")
+    plt.ylabel("Subjects")
+    plt.legend()
+    plt.savefig(".\\data\\ponet\\score_dist.png")
+    plt.clf()
+
+
+def main():
+    # pre()
+    # rela()
+    # ponet()
+    # final()
+    extra()
+
+if __name__ == "__main__":
+    main()

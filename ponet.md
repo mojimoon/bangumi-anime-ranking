@@ -101,10 +101,12 @@ See main [README.md](README.md#Requirements).
 
 ### Run
 
-There are three main functions in `ponet.py`:
+There are three major parts in `ponet.py`:
 - `pre()` is used to preprocess the original dataset. It will generate `data/ponet/subjects.csv`. You don't need to run it again unless you have an updated dataset.
 - `rela()` is used to calculate the relative votes of all pairs of entries. It will generate `data/ponet/relative_votes.csv`.
-- `ponet()` is used to calculate the final ranking. It will generate `data/ponet/ponet.csv`.
+- `ponet()` and `final()` are used to calculate the final ranking. They will generate `data/ponet/ponet.csv`.
+
+Modify `main()` to run different functions.
 
 ## Performance
 
@@ -112,22 +114,38 @@ Performance issue is known to be a major problem of PONet.
 
 The time complexity of PONet is $\mathcal{O}(N^2+M)$, where $N$ is the number of entries and $M$ is the number of votes.
 
+However, simply by using `numpy.ndarray` instead of `pandas.DataFrame`, the efficiency can be improved by 2 orders of magnitude.
+
+| Process | Relative Votes | Final Ranking |
+| --- | --- | --- |
+| Time Complexity | $\mathcal{O}(M)$ | $\mathcal{O}(N^2)$ |
+| Estimated Time with `DataFrame` | 16 hours | 10 hours |
+| Estimated Time with `ndarray` | 25 minutes | 2 minutes |
+
+Note: The running time is based on my personal computer (i5-12500H, 16GB RAM), and the bottleneck is memory usage.
+
 ### Relative Votes
 
-This is the $O(M)$ part, also the most time-consuming process.
+Suppose a user has voted $n$ entries. A total of $\frac{n(n-1)}{2}$ pairs of entries will be recorded. Thus the total time complexity is $\mathcal{O}\left(\sum_{i=1}^N\frac{n_i(n_i-1)}{2}\right)$, where $n_i$ is the number of entries voted by user $i$.
 
-If a specific users votes $n$ entries, then $n(n-1)/2$ pairs will be considered. $n$ is generally small for most of the users, but some who have collected 1000+ entries will be a problem. The total number of pairs is $\sum_{i=1}^{N}n_i(n_i-1)/2$, where $n_i$ is the number of entries voted by user $i$, estimated within the range 1e7 ~ 1e8 (while M is only 7.7e6).
+For most users, $n_i$ is small. However, there are some users who have voted a large number of entries. There are some hundreds of users who have voted more than 1000 entries (although unrated entries are ignored in this project). The time complexity of these users is $\mathcal{O}(n_i^2)$, which has the same OoM as the total time complexity and thus consumes most of the time.
 
-So how slow can it be?
+The number of actual operations, or the pairs recorded, is estimated to be ~8e7. In comparison, the total number of votes is ~8e6, and the total number of entries is ~8e3.
 
-> I have a laptop running i5-12500H and 16GB RAM.  
-> At first the efficiency is only about 10000 records per minute, which means it will take 1000 minutes (16 hours) to finish the calculation. That was just unacceptable.  
-> After consulting some friends, I found that the main reason for the low efficiency is that I used `pandas.DataFrame` to store the data. So I changed it to `numpy.ndarray`, and the efficiency increased to ~300000 records per minute. That's much better! I completed the calculation in about 25 minutes.  
-> Still there is room for improvement. For example, you can try `numba`.  
-> But for me, the major bottleneck is memory. The script drains about 10GB of memory, and I have to close all other programs to run it. I don't think I can do much more.
+It can be further optimized by switching to `numba`, though I am not familiar with it. Also, the majority of the time is spent on the users who have voted a large number of entries, while even that thousands are not large compared to total number of records. Thus, it is possible to split the dataset into several parts and run them in parallel.
 
 ### Final Ranking
 
-*This part is a work in progress.*
+The time complexity of final ranking is $\mathcal{O}(N^2)$, which is actually smaller (~2.4e7 rows in `relative_votes.csv`), because some of the entry pairs are skipped.
 
-The time complexity of the final ranking is $\mathcal{O}(N^2)$, which is much smaller than that of relative votes. However, it is still too slow to be acceptable.
+It can be further optimized with numpy `mask` and `bincount`, but since the speed is already acceptable, I didn't do it.
+
+## Results
+
+*Work in progress.*
+
+Result table `data/ponet/ponet.csv` is sorted by `id` in ascending order.
+
+Even though the file is encoded in UTF-8, Excel will still try to open it with GBK encoding.
+
+Therefore, I made a GB-2312 version of the file, [ponet_gb.csv](data/ponet/ponet_gb.csv), which can be opened with Excel directly.
