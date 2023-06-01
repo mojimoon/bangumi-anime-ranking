@@ -56,12 +56,15 @@ import time
 INPUT_0 = ".\\bangumi15M\\AnonymousUserCollection.csv"
 INPUT_1 = ".\\bangumi15M\\Subjects.csv"
 TMP_1 = ".\\data\\ponet\\subjects.csv"
+TMP_2 = ".\\data\\ponet\\relative_votes.csv"
 OUTPUT = ".\\data\\ponet\\ponet.csv"
 
 N = 10 # minimum number of users rated both A and B
 VOT_MIN = 50 # minimum number of votes to be considered
 
-def input1():
+timer = time.time()
+
+def pre():
     '''
     read data from INPUT_1, preprocess and save to TMP_1
     '''
@@ -85,14 +88,11 @@ input[2]: .\data\ponet\subjects.csv (TMP_1)
     only valid anime entries with more than VOT_MIN votes
 '''
 
-# n = input1()
+# n = pre()
 n = 8573 # entries in INPUT_1
 
 df2 = pd.read_csv(TMP_1)
 ids = df2["id"].tolist()
-pv = {} # relative positive votes
-nv = {} # relative negative votes
-tv = {} # total votes
 
 df0 = pd.read_csv(INPUT_0)[["user_id", "subject_id", "rating"]].reset_index(drop=True)
 df0 = df0.sort_values(by=["user_id", "subject_id"]).reset_index(drop=True)
@@ -101,68 +101,86 @@ df0 = df0[df0["rating"] > 0]
 
 len0 = len(df0) # 7770854
 
-timer = time.time()
-last = timer
+last = time.time()
+print("time elapsed: %.2f" % (last - timer))
 
 # ["user_id", "subject_id", "rating"]
 UID = 0
 SID = 1
 RAT = 2
 
-arr = df0.to_numpy()
-cur_begin = 0
-cur_end = 1
-# use double pointer to get this current user's records in rows [cur_begin, cur_end-1]
-while cur_end < len0:
-    if arr[cur_end, UID] == arr[cur_begin, UID]:
-        cur_end += 1
-    else:
-        for i in range(cur_begin, cur_end - 1):
-            ri = arr[i, RAT]
-            if ri == 0:
-                continue
-            si = arr[i, SID]
-            for j in range(i + 1, cur_end):
-                # it is guaranteed that si < sj
-                rj = arr[j, RAT]
-                if rj == 0:
+def rela():
+    global last
+    '''
+    read data from INPUT_0, preprocess and save to TMP_2
+    '''
+    pv = {} # relative positive votes
+    nv = {} # relative negative votes
+    tv = {} # total votes
+    arr = df0.to_numpy()
+    cur_begin = 0
+    cur_end = 1
+    # use double pointer to get this current user's records in rows [cur_begin, cur_end-1]
+    while cur_end < len0:
+        if arr[cur_end, UID] == arr[cur_begin, UID]:
+            cur_end += 1
+        else:
+            for i in range(cur_begin, cur_end - 1):
+                ri = arr[i, RAT]
+                if ri == 0:
                     continue
-                sj = arr[j, SID]
-                if ri > rj:
-                    pv[(si, sj)] = pv.get((si, sj), 0) + 1
-                elif ri < rj:
-                    nv[(si, sj)] = nv.get((si, sj), 0) + 1
-                tv[(si, sj)] = tv.get((si, sj), 0) + 1
-        cur_begin = cur_end
-        cur_end += 1
-        # print cur_begin every minute
-        if time.time() - last > 60:
-            print("%d %.0f" % (cur_begin, time.time() - timer))
-            last = time.time()
+                si = arr[i, SID]
+                for j in range(i + 1, cur_end):
+                    # it is guaranteed that si < sj
+                    rj = arr[j, RAT]
+                    if rj == 0:
+                        continue
+                    sj = arr[j, SID]
+                    if ri > rj:
+                        pv[(si, sj)] = pv.get((si, sj), 0) + 1
+                    elif ri < rj:
+                        nv[(si, sj)] = nv.get((si, sj), 0) + 1
+                    tv[(si, sj)] = tv.get((si, sj), 0) + 1
+            cur_begin = cur_end
+            cur_end += 1
+            # print cur_begin every minute
+            if time.time() - last > 59:
+                print("%d %.0f" % (cur_begin, time.time() - timer))
+                last = time.time()
 
-print("time elapsed: %.2f" % (time.time() - timer))
+    print("time elapsed: %.2f" % (time.time() - timer))
 
-df2["total_score"] = 0
-df2["prob_score"] = 0
-df2["simp_score"] = 0
-df2["mod_score"] = 0
+    with open(TMP_2, "w") as f:
+        for (si, sj), v in tv.items():
+            f.write("%d,%d,%d,%d\n" % (si, sj, v, pv.get((si, sj), 0) - nv.get((si, sj), 0)))
 
-# use tv to enumerate all pairs of subjects
-for (si, sj) in tv:
-    if tv[(si, sj)] >= N:
-        X = pv.get((si, sj), 0) - nv.get((si, sj), 0)
-        mask_si = df2["id"] == si
-        mask_sj = df2["id"] == sj
-        df2.loc[mask_si, "total_score"] += X
-        df2.loc[mask_sj, "total_score"] -= X
-        df2.loc[mask_si, "prob_score"] += X / N
-        df2.loc[mask_sj, "prob_score"] -= X / N
-        df2.loc[mask_si, "simp_score"] += np.sign(X)
-        df2.loc[mask_sj, "simp_score"] -= np.sign(X)
-        df2.loc[mask_si, "mod_score"] += X * X / N * np.sign(X)
-        df2.loc[mask_sj, "mod_score"] -= X * X / N * np.sign(X)
+rela()
 
-df2 = df2.sort_values(by=["rank"]).reset_index(drop=True)
-df2.to_csv(OUTPUT, index=False, float_format="%.4f")
+def ponet():
+    '''
+    read data from TMP_2, calculate scores and save to OUTPUT
+    '''
+    df2["total_score"] = 0
+    df2["prob_score"] = 0
+    df2["simp_score"] = 0
+    df2["mod_score"] = 0
 
-print("time elapsed: %.2f" % (time.time() - timer))
+    # use tv to enumerate all pairs of subjects
+    for (si, sj) in tv:
+        if tv[(si, sj)] >= N:
+            X = pv.get((si, sj), 0) - nv.get((si, sj), 0)
+            mask_si = df2["id"] == si
+            mask_sj = df2["id"] == sj
+            df2.loc[mask_si, "total_score"] += X
+            df2.loc[mask_sj, "total_score"] -= X
+            df2.loc[mask_si, "prob_score"] += X / N
+            df2.loc[mask_sj, "prob_score"] -= X / N
+            df2.loc[mask_si, "simp_score"] += np.sign(X)
+            df2.loc[mask_sj, "simp_score"] -= np.sign(X)
+            df2.loc[mask_si, "mod_score"] += X * X / N * np.sign(X)
+            df2.loc[mask_sj, "mod_score"] -= X * X / N * np.sign(X)
+
+    df2 = df2.sort_values(by=["rank"]).reset_index(drop=True)
+    df2.to_csv(OUTPUT, index=False, float_format="%.4f")
+
+    print("time elapsed: %.2f" % (time.time() - timer))
