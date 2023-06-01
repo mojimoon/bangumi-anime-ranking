@@ -199,6 +199,8 @@ def final():
     # finally, merge df2 and scores
     df3 = pd.read_csv(TMP_3, header=None, names=["id", "total_score", "prob_score", "simp_score", "conf_score"])
     df3 = df3.drop_duplicates(subset=["id"])
+    # drop if total_score is 0
+    df3 = df3[df3["total_score"] != 0]
     df3 = df3.sort_values(by=["id"]).reset_index(drop=True)
     df4 = pd.merge(df2.drop_duplicates(subset=["id"]), df3, on="id")
     df4.to_csv(OUTPUT, index=False)
@@ -238,7 +240,7 @@ def extra():
 def main():
     # pre()
     # rela()
-    ponet()
+    # ponet()
     final()
     # extra()
 
