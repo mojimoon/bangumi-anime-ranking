@@ -23,16 +23,16 @@ input[1]: .\bangumi15M\Subjects.csv
         locked: [bool] if locked - locked entries are ignored
 
 output: .\data\ponet\ponet.csv
-    columns: [id,name,rank,total,total_score,prob_score,simp_score,mod_score]
+    columns: [id,name,rank,total,total_score,prob_score,simp_score,conf_score]
         id: [int] subject ID
         name: [string] name (Chinese > Original)
         rank: [int] original rank
         total: [int] total scored votes
-        total_score, prob_score, simp_score, mod_score: [float] PO-net scores, see below
+        total_score, prob_score, simp_score, conf_score: [float] PO-net scores, see below
 
 pseudo code:
     for each subject:
-        init total_score, prob_score, simp_score, mod_score to 0
+        init total_score, prob_score, simp_score, conf_score to 0
     for each subject A:
         for each subject B (B.id > A.id):
             if number of users rated both A and B >= N:
@@ -41,7 +41,7 @@ pseudo code:
                 transfer (X-Y) from B.total_score to A.total_score
                 transfer (X-Y)/N from B.prob_score to A.prob_score
                 transfer sgn(X-Y) from B.simp_score to A.simp_score
-                transfer sgn(X-Y)*(X-Y)^2/N from B.mod_score to A.mod_score
+                transfer (X-Y)/sqrt(N) from B.conf_score to A.conf_score
             else:
                 do nothing
     sort according to original rank ascending
@@ -59,7 +59,7 @@ TMP_1 = ".\\data\\ponet\\subjects.csv"
 TMP_2 = ".\\data\\ponet\\relative_votes.csv"
 OUTPUT = ".\\data\\ponet\\ponet.csv"
 
-N = 10 # minimum number of users rated both A and B
+THRESHOLD = 10 # minimum number of users rated both A and B
 VOT_MIN = 50 # minimum number of votes to be considered
 
 timer = time.time()
@@ -154,7 +154,7 @@ def rela():
         for (si, sj), v in tv.items():
             f.write("%d,%d,%d,%d\n" % (si, sj, v, pv.get((si, sj), 0) - nv.get((si, sj), 0)))
 
-rela()
+# rela()
 
 def ponet():
     '''
@@ -163,22 +163,23 @@ def ponet():
     df2["total_score"] = 0
     df2["prob_score"] = 0
     df2["simp_score"] = 0
-    df2["mod_score"] = 0
+    df2["conf_score"] = 0
 
-    # use tv to enumerate all pairs of subjects
-    for (si, sj) in tv:
-        if tv[(si, sj)] >= N:
-            X = pv.get((si, sj), 0) - nv.get((si, sj), 0)
-            mask_si = df2["id"] == si
-            mask_sj = df2["id"] == sj
-            df2.loc[mask_si, "total_score"] += X
-            df2.loc[mask_sj, "total_score"] -= X
-            df2.loc[mask_si, "prob_score"] += X / N
-            df2.loc[mask_sj, "prob_score"] -= X / N
-            df2.loc[mask_si, "simp_score"] += np.sign(X)
-            df2.loc[mask_sj, "simp_score"] -= np.sign(X)
-            df2.loc[mask_si, "mod_score"] += X * X / N * np.sign(X)
-            df2.loc[mask_sj, "mod_score"] -= X * X / N * np.sign(X)
+    with open(TMP_2, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            si, sj, N, X = map(int, row)
+            if N >= THRESHOLD:
+                mask_si = df2["id"] == si
+                mask_sj = df2["id"] == sj
+                df2.loc[mask_si, "total_score"] += X
+                df2.loc[mask_sj, "total_score"] -= X
+                df2.loc[mask_si, "prob_score"] += X / N
+                df2.loc[mask_sj, "prob_score"] -= X / N
+                df2.loc[mask_si, "simp_score"] += np.sign(X)
+                df2.loc[mask_sj, "simp_score"] -= np.sign(X)
+                df2.loc[mask_si, "conf_score"] += X / np.sqrt(N)
+                df2.loc[mask_sj, "conf_score"] -= X / np.sqrt(N)
 
     df2 = df2.sort_values(by=["rank"]).reset_index(drop=True)
     df2.to_csv(OUTPUT, index=False, float_format="%.4f")
