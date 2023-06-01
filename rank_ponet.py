@@ -109,24 +109,25 @@ UID = 0
 SID = 1
 RAT = 2
 
+arr = df0.to_numpy()
 cur_begin = 0
 cur_end = 1
 # use double pointer to get this current user's records in rows [cur_begin, cur_end-1]
 while cur_end < len0:
-    if df0.iloc[cur_end, UID] == df0.iloc[cur_begin, UID]:
+    if arr[cur_end, UID] == arr[cur_begin, UID]:
         cur_end += 1
     else:
         for i in range(cur_begin, cur_end - 1):
-            ri = df0.iloc[i, RAT]
+            ri = arr[i, RAT]
             if ri == 0:
                 continue
-            si = df0.iloc[i, SID]
+            si = arr[i, SID]
             for j in range(i + 1, cur_end):
                 # it is guaranteed that si < sj
-                rj = df0.iloc[j, RAT]
+                rj = arr[j, RAT]
                 if rj == 0:
                     continue
-                sj = df0.iloc[j, SID]
+                sj = arr[j, SID]
                 if ri > rj:
                     pv[(si, sj)] = pv.get((si, sj), 0) + 1
                 elif ri < rj:
@@ -150,14 +151,16 @@ df2["mod_score"] = 0
 for (si, sj) in tv:
     if tv[(si, sj)] >= N:
         X = pv.get((si, sj), 0) - nv.get((si, sj), 0)
-        df2.loc[df2["id"] == si, "total_score"] += X
-        df2.loc[df2["id"] == sj, "total_score"] -= X
-        df2.loc[df2["id"] == si, "prob_score"] += X / N
-        df2.loc[df2["id"] == sj, "prob_score"] -= X / N
-        df2.loc[df2["id"] == si, "simp_score"] += math.copysign(1, X)
-        df2.loc[df2["id"] == sj, "simp_score"] -= math.copysign(1, X)
-        df2.loc[df2["id"] == si, "mod_score"] += X * X / N * math.copysign(1, X)
-        df2.loc[df2["id"] == sj, "mod_score"] -= X * X / N * math.copysign(1, X)
+        mask_si = df2["id"] == si
+        mask_sj = df2["id"] == sj
+        df2.loc[mask_si, "total_score"] += X
+        df2.loc[mask_sj, "total_score"] -= X
+        df2.loc[mask_si, "prob_score"] += X / N
+        df2.loc[mask_sj, "prob_score"] -= X / N
+        df2.loc[mask_si, "simp_score"] += np.sign(X)
+        df2.loc[mask_sj, "simp_score"] -= np.sign(X)
+        df2.loc[mask_si, "mod_score"] += X * X / N * np.sign(X)
+        df2.loc[mask_sj, "mod_score"] -= X * X / N * np.sign(X)
 
 df2 = df2.sort_values(by=["rank"]).reset_index(drop=True)
 df2.to_csv(OUTPUT, index=False, float_format="%.4f")
