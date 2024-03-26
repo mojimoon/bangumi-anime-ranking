@@ -48,10 +48,10 @@ To crawl data by yourself, you can run the following commands, or simply execute
 - **All data are stored in UTF-8 encoding**. Your spreadsheet software may not recognize it. You should open the CSV file with encoding `UTF-8` or `UTF-8 with BOM`.
 - **Please configure `subject.py` Line 31 before running**. If you need a fresh start, change to `w`; but if you want to resume after some blocks, change to `a`.
 - Estimated time to get entry list: around 2 minutes.
-- Estimated time to get entry details: 40-50 minutes.
+- Estimated time to get entry details: 1 hour.
 - Refer to [Bangumi API](https://bangumi.github.io/api/) for everything about API.
 - Although fake user-agent works, it is recommended to [configure your own UA](https://github.com/bangumi/api/blob/master/docs-raw/user%20agent.md).
-- The data are crawled and processed in blocks. By default, 10 pages (240 entries) per block. At 2023-04-30, there are 320 pages in total, which are split into 32 blocks, numbered with their starting page number (1, 11, 21, ..., 311). It is very likely that pages and blocks will increase over time, but there should be no issue if you keep the default block setting.
+- The data are crawled and processed in blocks. By default, 10 pages (240 entries) per block. As of 2023-04-30, there are 320 pages in total, which are split into 32 blocks, numbered with their starting page number (1, 11, 21, ..., 311). It is very likely that pages and blocks will increase over time, but there should be no issue if you keep the default block setting.
 - Restricted entries can be found in `data/id/restricted.txt`. They appear in the ranking list but cannot be accessed by API. They are excluded from the `sub.csv` file.
 - The `rank` field in the CSV file is the rank within available entries. The original rank is not included since it cannot provide any statistical information.
 - Because of the restricted entries, it is common to see many entries missing with logs in the console. You can safely ignore them. However, if there are too many missing entries, you may want to check:

@@ -44,13 +44,11 @@ Then:
 2. Calculate the score of A and B. Different forms of relative score of A against B is defined as:
     - **Total Score** is defined as `x - y`.
     - **Percentage Score** is defined as `(x - y) / n`.
-    - **Percentage Score with Confidence** is defined as `(x - y) / sqrt(n)`.
     - **Simple Score** is defined as `sgn(x - y)`.
 
 > Different scores can behave very differently. Suppose we have entry A and B (x = 90, y = 10, n = 100), and entry C and D (x = 9, y = 1, n = 10).
 > - Total score favors entry with more votes. A will receive a higher score than C. It is likely to yield a ranking similar to the classic ones.
 > - Percentage score favors entry with less disagreement. A will receive equal score as C. However, suppose we have a user thinking D is better than C. This will siginicantly reduce the score of C; and if he thinks B is better than A, this will just slightly reduce the score of A.
-> - Percentage score with confidence is a compromise between the above two. It still favors entry with more votes, but it will become much less sensitive when n is large. A will still receive a higher score than C, but the difference is much smaller than that of total score.
 > - Simple score is another compromise. Pretty insensitive to n, but tolerates disagreement more.
 
 3. The relative score of B against A is defined as the negative of that of A against B.
