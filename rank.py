@@ -75,6 +75,12 @@ def wilson():
     df.loc[:, 'w_rank'] = np.arange(1,ENT+1)
     ofile.write(f'Wilson\'s Interval Lower Bound Rank Distance: {sum(abs(df["w_rank"] - df["rank"])) / (ENT * (ENT - 1) / 2):.8f}\n')
 
+def extreme_weighted():
+    global df
+    df.loc[:, 'extreme'] = (df['s10'] * np.power(np.log10(df['s10'].clip(lower=10)), 1/5) + df['s9'] + df['s8'] + df['s7']) / df['vote']
+    df = df.sort_values(by=['extreme'], ascending=False)
+    df.loc[:, 'e_rank'] = np.arange(1,ENT+1)
+    ofile.write(f'Extreme Weighted Rank Distance: {sum(abs(df["e_rank"] - df["rank"])) / (ENT * (ENT - 1) / 2):.8f}\n')
 
 def output():
     _df = df.sort_values(by=['rank']).drop(['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'], axis=1)
@@ -86,6 +92,7 @@ def main():
     bayesian()
     steamdb()
     wilson()
+    extreme_weighted()
     output()
 
 if __name__ == '__main__':
